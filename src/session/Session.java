@@ -1,14 +1,17 @@
-package models;
+package session;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Properties;
 
 import javax.naming.InitialContext;
 
-import session.AuthenticationGatewayBeanRemote;
-
-public class Session {
+public class Session implements Serializable {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private User user;
 	private AuthenticationGatewayBeanRemote sessionState = null;
 	
@@ -187,7 +190,7 @@ public class Session {
 			props.put("org.omg.COBRA.ORBInitialPort", 3700);
 			
 			InitialContext itx = new InitialContext(props);
-			sessionState = (AuthenticationGatewayBeanRemote) itx.lookup("java:global/cs4743_session_bean/StateBean!session.AuthenticationGatewayBeanRemote");
+			sessionState = (AuthenticationGatewayBeanRemote) itx.lookup("java:global/cs4743_session_bean/AuthenticationGatewayBean!session.AuthenticationGatewayBeanRemote");
 		} catch(javax.naming.NamingException e1) {
 			e1.printStackTrace();
 		}

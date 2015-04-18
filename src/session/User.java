@@ -1,8 +1,14 @@
-package models;
+package session;
+
+import java.io.Serializable;
 
 
-public class User {
+public class User implements Serializable {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private String fullName;
 	private String email;
 	private int roleId;

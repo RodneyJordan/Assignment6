@@ -5,9 +5,9 @@ import models.InventoryModel;
 import models.PartsModel;
 import models.ProductTemplatePartsGateway;
 import models.ProductTemplatePartsModel;
-import models.Session;
 import models.TemplateGateway;
 import models.TemplateModel;
+import session.Session;
 import views.InventoryView;
 
 import java.util.Timer;

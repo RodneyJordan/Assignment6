@@ -4,8 +4,8 @@ import models.InventoryItem;
 import models.InventoryModel;
 import models.PartsModel;
 import models.ProductTemplatePartsModel;
-import models.Session;
 import models.TemplateModel;
+import session.Session;
 import views.DetailView;
 
 import java.awt.event.ActionEvent;

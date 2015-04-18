@@ -7,7 +7,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
-import models.Session;
+import session.Session;
 
 /**
  * Displays the user that is currently logged in

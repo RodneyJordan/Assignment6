@@ -2,6 +2,7 @@ package controllers;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.Serializable;
 import java.util.Properties;
 
 import javax.naming.InitialContext;
@@ -12,9 +13,9 @@ import models.InventoryModel;
 import models.ItemConnectionGateway;
 import models.PartsModel;
 import models.ProductTemplatePartsGateway;
-import models.Session;
 import models.TemplateGateway;
 import session.AuthenticatorBeanRemote;
+import session.Session;
 import views.LoggedInView;
 import views.LoginView;
 
@@ -23,8 +24,13 @@ import views.LoginView;
  * @author Rodney Jordan
  * @author Jacob Pagano
  */
-public class LoginController implements ActionListener {
+public class LoginController implements ActionListener, Serializable {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	/**
 	 * A login view
 	 */
@@ -96,7 +102,7 @@ public class LoginController implements ActionListener {
 			props.put("org.omg.COBRA.ORBInitialPort", 3700);
 			
 			InitialContext itx = new InitialContext(props);
-			sessionState = (AuthenticatorBeanRemote) itx.lookup("java:global/cs4743_session_bean/StateBean!session.AuthenticatorBeanRemote");
+			sessionState = (AuthenticatorBeanRemote) itx.lookup("java:global/cs4743_session_bean/AuthenticatorBean!session.AuthenticatorBeanRemote");
 		} catch(javax.naming.NamingException e1) {
 			e1.printStackTrace();
 		}

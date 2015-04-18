@@ -4,8 +4,6 @@ import java.util.ArrayList;
 
 import javax.ejb.Remote;
 
-import models.User;
-
 @Remote
 public interface AuthenticationGatewayBeanRemote {
 	

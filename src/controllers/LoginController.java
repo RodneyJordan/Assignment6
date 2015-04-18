@@ -2,7 +2,9 @@ package controllers;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Properties;
 
+import javax.naming.InitialContext;
 import javax.swing.JOptionPane;
 
 import models.ConnectionGateway;
@@ -12,7 +14,7 @@ import models.PartsModel;
 import models.ProductTemplatePartsGateway;
 import models.Session;
 import models.TemplateGateway;
-import session.Authenticator;
+import session.AuthenticatorBeanRemote;
 import views.LoggedInView;
 import views.LoginView;
 
@@ -27,6 +29,8 @@ public class LoginController implements ActionListener {
 	 * A login view
 	 */
 	LoginView loginView;
+	
+	private AuthenticatorBeanRemote sessionState = null;
 	
 	Session session;
 	
@@ -47,9 +51,10 @@ public class LoginController implements ActionListener {
 	 * Watches for a button press on the login view
 	 */
 	public void actionPerformed(ActionEvent e) {
-		Authenticator authenticator = new Authenticator();
+		//Authenticator authenticator = new Authenticator();
+		initSession();
 		try {
-		session = authenticator.isAuthenticated(loginView.userNameTextField.getText(),
+		session = sessionState.isAuthenticated(loginView.userNameTextField.getText(),
 				loginView.passwordTextField.getText());
 		} catch (Exception exception)
 		{
@@ -82,5 +87,19 @@ public class LoginController implements ActionListener {
 	    	}
 	        
 		}
+	}
+	
+	public void initSession() {
+		try {
+			Properties props = new Properties();
+			props.put("org.omg.COBRA.ORBInitialHost", "localhost");
+			props.put("org.omg.COBRA.ORBInitialPort", 3700);
+			
+			InitialContext itx = new InitialContext(props);
+			sessionState = (AuthenticatorBeanRemote) itx.lookup("java:global/cs4743_session_bean/StateBean!session.AuthenticatorBeanRemote");
+		} catch(javax.naming.NamingException e1) {
+			e1.printStackTrace();
+		}
+		//updateTitle();
 	}
 }

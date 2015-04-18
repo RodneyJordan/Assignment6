@@ -2,6 +2,8 @@ package models;
 
 import java.util.ArrayList;
 
+import session.AuthenticationGateway;
+
 public class Session {
 	
 	private User user;

@@ -5,7 +5,6 @@ import java.awt.event.ActionListener;
 
 import javax.swing.JOptionPane;
 
-import models.Authenticator;
 import models.ConnectionGateway;
 import models.InventoryModel;
 import models.ItemConnectionGateway;
@@ -13,6 +12,7 @@ import models.PartsModel;
 import models.ProductTemplatePartsGateway;
 import models.Session;
 import models.TemplateGateway;
+import session.Authenticator;
 import views.LoggedInView;
 import views.LoginView;
 

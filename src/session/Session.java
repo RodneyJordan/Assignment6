@@ -1,13 +1,14 @@
 package session;
 
-//import java.io.Serializable;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Properties;
 
 import javax.naming.InitialContext;
+
 import org.glassfish.grizzly.http.server.naming.NamingException;
 
-public class Session {
+public class Session implements Serializable {
 	
 	/**
 	 * 

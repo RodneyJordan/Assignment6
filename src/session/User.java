@@ -1,9 +1,13 @@
-package models;
+package session;
 
-import javax.persistence.Entity;
+import java.io.Serializable;
 
-@Entity
-public class User {
+public class User implements Serializable {
+	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	
 	private String fullName;
 	private String email;

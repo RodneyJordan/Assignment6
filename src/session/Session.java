@@ -1,11 +1,21 @@
-package models;
+package session;
 
+import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Properties;
 
-public class Session {
+import javax.naming.InitialContext;
+
+import org.glassfish.grizzly.http.server.naming.NamingException;
+
+public class Session implements Serializable {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private User user;
-	private AuthenticationGateway authGate;
+	private AuthenticationGatewayBeanRemote sessionState = null;
 	
 	/*
 	 * PERMISSIONS
@@ -48,8 +58,9 @@ public class Session {
 	}
 	
 	public Session(String email) {
-		authGate = new AuthenticationGateway();
-		this.user = authGate.getUser(email);
+		//authGate = new AuthenticationGateway();
+		initSession();
+		this.user = sessionState.getUser(email);
 		setRolePermissions();
 	}
 	
@@ -65,7 +76,7 @@ public class Session {
 		
 		//then set permission booleans here
 		//gonna do this in a piss-poor hardcoded way because lazy, also time constraints
-		for(int p : authGate.getRolePolicy(user.getRoleId())){
+		for(int p : sessionState.getRolePolicy(user.getRoleId())){
 			switch(p){
 			case 1: this.canViewProductTemplates = true;
 				break;
@@ -172,6 +183,20 @@ public class Session {
 
 	public boolean isCanDeleteParts() {
 		return canDeleteParts;
+	}
+	
+	public void initSession() {
+		try {
+			Properties props = new Properties();
+			props.put("org.omg.COBRA.ORBInitialHost", "localhost");
+			props.put("org.omg.COBRA.ORBInitialPort", 3700);
+			
+			InitialContext itx = new InitialContext(props);
+			sessionState = (AuthenticationGatewayBeanRemote) itx.lookup("java:global/cs4743_session_bean/AuthenticationGatewayBean!session.AuthenticationGatewayBeanRemote");
+		} catch(javax.naming.NamingException e1) {
+			e1.printStackTrace();
+		}
+		//updateTitle();
 	}
 	
 }

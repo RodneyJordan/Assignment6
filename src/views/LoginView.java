@@ -34,6 +34,7 @@ public class LoginView extends JFrame {
 	 * Buttons for the view
 	 */
 	private JButton login;
+	private JButton cancel;
 	
 	/**
 	 * Layout for the panels
@@ -104,9 +105,11 @@ public class LoginView extends JFrame {
 	 */
 	private void setUpButtonPanel() {
 		login = new JButton("Log In");
+		cancel = new JButton("Cancel");
 		
 		buttonPanel = new JPanel();
 		buttonPanel.add(login);
+		buttonPanel.add(cancel);
 	}
 	
 	/**
@@ -115,6 +118,7 @@ public class LoginView extends JFrame {
 	 */
 	public void registerListeners(LoginController c) {
 		login.addActionListener(c);
+		cancel.addActionListener(c);
 	}
 	
 	/**

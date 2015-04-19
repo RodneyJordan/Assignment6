@@ -5,8 +5,8 @@ import models.PartsModel;
 import models.Part;
 import models.ProductTemplate;
 import models.ProductTemplatePartsModel;
-import models.Session;
 import models.TemplateModel;
+import session.Session;
 import views.AddItemView;
 
 import java.awt.event.ActionEvent;

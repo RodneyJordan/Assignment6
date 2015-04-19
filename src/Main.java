@@ -1,10 +1,10 @@
 
+import session.Session;
 import models.ConnectionGateway;
 import models.InventoryModel;
 import models.ItemConnectionGateway;
 import models.PartsModel;
 import models.ProductTemplatePartsGateway;
-import models.Session;
 import models.TemplateGateway;
 import controllers.InventoryController;
 import controllers.LoginController;

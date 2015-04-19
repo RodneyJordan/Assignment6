@@ -6,9 +6,9 @@ import models.ProductTemplate;
 import models.ProductTemplateParts;
 import models.ProductTemplatePartsGateway;
 import models.ProductTemplatePartsModel;
-import models.Session;
 import models.TemplateGateway;
 import models.TemplateModel;
+import session.Session;
 import views.TemplateView;
 
 import java.util.ArrayList;

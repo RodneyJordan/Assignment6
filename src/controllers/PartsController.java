@@ -2,7 +2,7 @@ package controllers;
 
 import models.PartsModel;
 import models.Part;
-import models.Session;
+import session.Session;
 import views.PartsView;
 
 import java.util.Timer;

@@ -210,4 +210,11 @@ public class InventoryView extends JFrame implements TableObserver
     public void update() {
         table.updateUI();
     }
+    
+    /**
+	 * Closes window
+	 */
+	public void closeWindow() {
+		dispose();
+	}
 }

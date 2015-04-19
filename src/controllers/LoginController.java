@@ -40,6 +40,10 @@ public class LoginController implements ActionListener, Serializable {
 	
 	Session session;
 	
+	private InventoryController c;
+	
+	private LoggedInView loggedInView;
+	
 	/**
 	 * Constructs a login controller
 	 */
@@ -57,41 +61,54 @@ public class LoginController implements ActionListener, Serializable {
 	 * Watches for a button press on the login view
 	 */
 	public void actionPerformed(ActionEvent e) {
-		//Authenticator authenticator = new Authenticator();
-		initSession();
-		try {
-		session = sessionState.isAuthenticated(loginView.userNameTextField.getText(),
+		String actionCommand = e.getActionCommand();
+		if(actionCommand.equalsIgnoreCase("Log In")) {
+			initSession();
+			try {
+				session = sessionState.isAuthenticated(loginView.userNameTextField.getText(),
 				loginView.passwordTextField.getText());
-		} catch (Exception exception)
-		{
-			System.out.println(exception);
-		}
+			} catch (Exception exception)
+			{
+				System.out.println(exception);
+			}
 		
-		if(session != null){
-			ConnectionGateway cg = new ConnectionGateway();
-	    	ItemConnectionGateway icg = new ItemConnectionGateway();
-	    	if(session.isCanViewInventoryItems()) {
-	    		InventoryModel inventoryModel = new InventoryModel(icg);
-	    		PartsModel partsModel = new PartsModel(inventoryModel, cg);
-	    		 @SuppressWarnings("unused")
-	 			InventoryController c = new InventoryController(partsModel, inventoryModel, session);
-	    		loginView.closeWindow();
-	    		@SuppressWarnings("unused")
-				LoggedInView loggedInView = new LoggedInView(session);
-	    	}
-	    	else {
-	    		if(JOptionPane.showConfirmDialog(null, "You are not authorized to view this inventory, would you like to sign in again?", "WARNING",
+			if(session != null){
+				ConnectionGateway cg = new ConnectionGateway();
+				ItemConnectionGateway icg = new ItemConnectionGateway();
+				if(session.isCanViewInventoryItems()) {
+					InventoryModel inventoryModel = new InventoryModel(icg);
+					PartsModel partsModel = new PartsModel(inventoryModel, cg);
+					c = new InventoryController(partsModel, inventoryModel, session);
+					loginView.closeWindow();
+					loggedInView = new LoggedInView(session);
+					loggedInView.registerListeners(this);
+				}
+				else {
+					if(JOptionPane.showConfirmDialog(null, "You are not authorized to view this inventory, would you like to sign in again?", "WARNING",
 	                    JOptionPane.YES_NO_OPTION) == JOptionPane.NO_OPTION) {
-	    		loginView.closeWindow();
-	    		}
-	    	}
-		}
-	    else {
-	    	if(JOptionPane.showConfirmDialog(null, "You are not authorized to do anything, would you like to sign in again?", "WARNING",
+						loginView.closeWindow();
+					}
+				}
+			}
+			else {
+				if(JOptionPane.showConfirmDialog(null, "You are not authorized to do anything, would you like to sign in again?", "WARNING",
 	                    JOptionPane.YES_NO_OPTION) == JOptionPane.NO_OPTION) {
-	    		loginView.closeWindow();
-	    	}
+					loginView.closeWindow();
+				}
 	        
+			}
+		}
+		else if(actionCommand.equalsIgnoreCase("Cancel")) {
+			loginView.userNameTextField.setText("");
+			loginView.passwordTextField.setText("");
+			loginView.userNameTextField.requestFocusInWindow();
+		}
+		else if(actionCommand.equalsIgnoreCase("Log Out")) {
+			session = null;
+			c.inventoryView.closeWindow();
+			loggedInView.closeWindow();
+			loginView = new LoginView();
+			loginView.registerListeners(this);
 		}
 	}
 	

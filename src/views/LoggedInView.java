@@ -36,6 +36,7 @@ public class LoggedInView extends JFrame {
 		
 		super("User Logged In");
 		setSize(WINDOW_WIDTH, WINDOW_HEIGHT);
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setLayout(new GridLayout(1, 1));
 		
 		setUpPanelUserName(session);

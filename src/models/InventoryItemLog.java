@@ -3,6 +3,8 @@ package models;
 import java.util.ArrayList;
 import java.util.Date;
 
+import session.LogEntry;
+
 
 public class InventoryItemLog {
 	

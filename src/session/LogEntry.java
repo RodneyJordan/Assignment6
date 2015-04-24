@@ -1,13 +1,19 @@
-package models;
+package session;
 
+import java.io.Serializable;
 import java.util.Date;
 
 /**
  * Creates a log entry
  * @author Rodney Jordan
  */
-public class LogEntry {
+public class LogEntry implements Serializable {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	/**
 	 * The date of the entry
 	 */

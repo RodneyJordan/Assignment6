@@ -4,6 +4,8 @@ import java.util.ArrayList;
 
 import javax.swing.table.AbstractTableModel;
 
+import session.LogEntry;
+
 @SuppressWarnings("serial")
 public class ItemLogTableModel extends AbstractTableModel {
 	

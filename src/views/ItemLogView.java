@@ -1,5 +1,6 @@
 package views;
 
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 
 import javax.swing.JButton;
@@ -10,6 +11,7 @@ import javax.swing.JTable;
 
 import models.ItemLogTableModel;
 
+@SuppressWarnings("serial")
 public class ItemLogView extends JFrame {
 	
 	/**
@@ -21,7 +23,7 @@ public class ItemLogView extends JFrame {
 	/**
 	 * Button for the view
 	 */
-	private JButton ok;
+	private JButton close;
 	
 	/**
 	 * The table for the view
@@ -66,20 +68,34 @@ public class ItemLogView extends JFrame {
 	 * Set up the table
 	 */
 	private void setUpTable(ItemLogTableModel model) {
-		
+		table = new JTable();
+		table.setPreferredScrollableViewportSize(new Dimension(550, 400));
+		table.setFillsViewportHeight(true);
+		scrollPane = new JScrollPane(table);
 	}
 	
 	/**
 	 * Sets up the table panel
 	 */
 	private void setUpTablePanel() {
-		
+		tablePanel = new JPanel();
+		tablePanel.add(table);
 	}
 	
 	/**
 	 * Sets up the button panel
 	 */
 	private void setUpButtonPanel() {
+		close = new JButton("Close");
+		buttonPanel = new JPanel();
 		
+		buttonPanel.add(close);
+	}
+	
+	/**
+	 * Closes the window
+	 */
+	public void closeWindow() {
+		this.dispose();
 	}
 }

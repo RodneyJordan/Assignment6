@@ -65,10 +65,10 @@ public class DetailController implements ActionListener
     	this.session = session;
     	this.partsModel = partsModel;
         this.inventoryItem = inventoryItem;
-        detailView = new DetailView(this.inventoryItem);
         this.inventoryModel = inventoryModel;
+        detailView = new DetailView(this.inventoryItem, this.inventoryModel);
         this.templateModel = templateModel;
-        this.productTemplatePartsModel = productTemplatePartsModel;
+        this.productTemplatePartsModel = productTemplatePartsModel; 
         this.detailView.registerListeners(this);
     }
 

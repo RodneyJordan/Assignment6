@@ -1,12 +1,15 @@
 package views;
 
 import java.awt.GridLayout;
+
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
+
 import controllers.LoginController;
 
 /**
@@ -21,7 +24,7 @@ public class LoginView extends JFrame {
 	 * Text fields for the view
 	 */
 	public JTextField userNameTextField;
-	public JTextField passwordTextField;
+	public JPasswordField passwordTextField;
 	
 	/**
 	 * Panels for the view
@@ -92,7 +95,7 @@ public class LoginView extends JFrame {
 	 */
 	private void setUpPanel2() {
 		JLabel messgaePassword = new JLabel("Password", SwingConstants.CENTER);
-		passwordTextField = new JTextField(20);
+		passwordTextField = new JPasswordField(20);
 		
 		panel2 = new JPanel();
 		panel2.setLayout(layout);

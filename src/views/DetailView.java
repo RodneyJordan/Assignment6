@@ -2,9 +2,15 @@ package views;
 
 import controllers.DetailController;
 import models.InventoryItem;
+import models.InventoryModel;
+import models.ItemLogTableModel;
 
 import javax.swing.*;
+
+import session.LogEntry;
+
 import java.awt.*;
+import java.util.ArrayList;
 
 /**
  * Creates the detail view window
@@ -21,6 +27,7 @@ public class DetailView extends JFrame
     private JPanel panel2;
     private JPanel panel3;
     private JPanel panel4;
+    private JPanel panel5;
     private JPanel buttonPanel;
 
     /**
@@ -29,6 +36,16 @@ public class DetailView extends JFrame
     private JButton ok;
     private JButton addItem;
     private JButton edit;
+    
+    /**
+     * The table for the view
+     */
+    private JTable table;
+    
+    /**
+     * The scroll pane for the view
+     */
+    private JScrollPane scrollPane;
 
     /**
      * Layout for the panels
@@ -38,7 +55,7 @@ public class DetailView extends JFrame
     /**
      * Width of the window
      */
-    private final int WINDOW_WIDTH = 600;
+    private final int WINDOW_WIDTH = 400;
 
     /**
      * Height of the window
@@ -49,24 +66,32 @@ public class DetailView extends JFrame
      * Constructor
      * @param item : The inventory item that details will be shown for.
      */
-    public DetailView(InventoryItem item)
+    public DetailView(InventoryItem item, InventoryModel model)
     {
         super("Inventory Item");
 
         setSize(WINDOW_WIDTH, WINDOW_HEIGHT);
-        setLayout(new GridLayout(5,1));
+        setLayout(new FlowLayout()); //GridLayout(6,1));
+        
+        JPanel infoPanel = new JPanel();
+        infoPanel.setLayout(new GridLayout(4, 1));
 
         setUpPanel1(item.getIdNumber());
-        add(panel1);
+        infoPanel.add(panel1);
 
         setUpPanel2(item.getPart().getPartName());
-        add(panel2);
+        infoPanel.add(panel2);
 
         setUpPanel3(item.getLocation());
-        add(panel3);
+        infoPanel.add(panel3);
 
         setUpPanel4(item.getQuantityString());
-        add(panel4);
+        infoPanel.add(panel4);
+        
+        add(infoPanel);
+        
+        setUpPanel5(model.getLogList(item.getIdNumber()));
+        add(panel5);
 
         setUpButtonPanel();
         add(buttonPanel);
@@ -134,6 +159,21 @@ public class DetailView extends JFrame
         panel4.setLayout(layout);
         panel4.add(messageQuantity);
         panel4.add(infoQuantity);
+    }
+    
+    /**
+     * Sets up the fifth panel
+     */
+    public void setUpPanel5(ArrayList<LogEntry> list) {
+    	ItemLogTableModel logModel = new ItemLogTableModel(list);
+    	table = new JTable(logModel);
+    	table.setPreferredScrollableViewportSize(new Dimension(350, 75));
+    	table.setFillsViewportHeight(true);
+    	scrollPane = new JScrollPane(table);
+    	
+    	panel5 = new JPanel();
+    	panel5.add(scrollPane);
+    	
     }
     
     /**

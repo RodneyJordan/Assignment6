@@ -13,7 +13,11 @@ import session.Session;
 import views.InventoryView;
 import views.ItemLogView;
 
+import java.text.DateFormat;
+import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.Locale;
 import java.util.Timer;
 import java.awt.event.*;
 import java.util.TimerTask;
@@ -146,10 +150,8 @@ public class InventoryController implements ActionListener
         }
         else if(actionCommand.equals("Log")) {
         	int selectedRow = inventoryView.getSelectedRow();
-        	ArrayList<LogEntry> dummyLog = new ArrayList<LogEntry>();
-        	LogEntry log = new LogEntry("25-04-2015", "testing purposes");
-        	dummyLog.add(log);
-        	ItemLogTableModel tableModel = new ItemLogTableModel(dummyLog); //inventoryModel.getLogList(selectedRow));
+        	
+        	ItemLogTableModel tableModel = new ItemLogTableModel(inventoryModel.getLogList(selectedRow));
         	logView = new ItemLogView(tableModel);
         	logView.registerListeners(this);
         }

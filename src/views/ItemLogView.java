@@ -69,7 +69,7 @@ public class ItemLogView extends JFrame {
 	 * Set up the table
 	 */
 	private void setUpTable(ItemLogTableModel model) {
-		table = new JTable();
+		table = new JTable(model);
 		table.setPreferredScrollableViewportSize(new Dimension(550, 400));
 		table.setFillsViewportHeight(true);
 		scrollPane = new JScrollPane(table);
@@ -80,7 +80,7 @@ public class ItemLogView extends JFrame {
 	 */
 	private void setUpTablePanel() {
 		tablePanel = new JPanel();
-		tablePanel.add(table);
+		tablePanel.add(scrollPane);
 	}
 	
 	/**

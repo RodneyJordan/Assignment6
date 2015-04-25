@@ -8,10 +8,12 @@ import models.ProductTemplatePartsGateway;
 import models.ProductTemplatePartsModel;
 import models.TemplateGateway;
 import models.TemplateModel;
+import session.LogEntry;
 import session.Session;
 import views.InventoryView;
 import views.ItemLogView;
 
+import java.util.ArrayList;
 import java.util.Timer;
 import java.awt.event.*;
 import java.util.TimerTask;
@@ -144,8 +146,12 @@ public class InventoryController implements ActionListener
         }
         else if(actionCommand.equals("Log")) {
         	int selectedRow = inventoryView.getSelectedRow();
-        	ItemLogTableModel tableModel = new ItemLogTableModel(inventoryModel.getLogList(selectedRow));
+        	ArrayList<LogEntry> dummyLog = new ArrayList<LogEntry>();
+        	LogEntry log = new LogEntry("25-04-2015", "testing purposes");
+        	dummyLog.add(log);
+        	ItemLogTableModel tableModel = new ItemLogTableModel(dummyLog); //inventoryModel.getLogList(selectedRow));
         	logView = new ItemLogView(tableModel);
+        	logView.registerListeners(this);
         }
         else if(actionCommand.equals("Close")) {
         	logView.closeWindow();

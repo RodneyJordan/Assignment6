@@ -99,11 +99,9 @@ public class ProductTemplatePartsModel extends AbstractTableModel {
 	 * Removes a product template part
 	 */
 	public void removeTemplatePart(int templateId, int partId, DetailTemplateModel detailTemplateModel) {
-		System.out.println("I work!!");
 		ptpg.deletePart(templateId, partId);
 		productTemplateParts = ptpg.getTemplateParts();
 		detailTemplateModel.updateList();
-		System.out.println("I work2!!");
 	}
 	
 	/**

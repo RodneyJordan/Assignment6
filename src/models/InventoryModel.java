@@ -302,7 +302,12 @@ public class InventoryModel extends AbstractTableModel {
     
     public ArrayList<LogEntry> getLogList(int row) {
     	ArrayList<LogEntry> logs = new ArrayList<LogEntry>();
-    	logs = gatewayRemote.getLogEntries(inventory.get(row).getIdNumber());
+    	logs = null;
+    	try {
+    		logs = gatewayRemote.getLogEntries(inventory.get(row).getIdNumber());
+    	} catch(NullPointerException e) {
+    		e.printStackTrace();
+    	}
     	return logs;
     }
     

@@ -41,13 +41,21 @@ public class ItemLogTableModel extends AbstractTableModel {
 	public Object getValueAt(int rowIndex, int columnIndex) {
 		LogEntry l = logEntries.get(rowIndex);
 		if(columnIndex == 0) {
-			String date = l.getDate().toString();
-			return date;
+			return l.getDateString();
 		}
 		else if(columnIndex == 1) {
 			return l.getDescription();
 		}
 		return null;
 	}
+	
+	/**
+     * Gets the column name at a given index in the array
+     * @param index
+     * @return String representing the name of a column at the given index
+     */
+    public String getColumnName(int index) {
+        return columnNames[index];
+    }
 
 }

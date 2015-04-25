@@ -36,6 +36,11 @@ public class LogEntry implements Serializable {
 		this.description = description;
 	}
 	
+	public LogEntry(String date, String description) {
+		this.setDateFromString(date);
+		this.description = description;
+	}
+	
 	/**
 	 * Gets the date of and entry
 	 */

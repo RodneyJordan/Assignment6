@@ -9,6 +9,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 
+import controllers.InventoryController;
 import models.ItemLogTableModel;
 
 @SuppressWarnings("serial")
@@ -90,6 +91,14 @@ public class ItemLogView extends JFrame {
 		buttonPanel = new JPanel();
 		
 		buttonPanel.add(close);
+	}
+	
+	/**
+	 * Register the listener for this view
+	 * @param c : Inventory Controller that listens for button presses
+	 */
+	public void registerListeners(InventoryController c) {
+		close.addActionListener(c);
 	}
 	
 	/**

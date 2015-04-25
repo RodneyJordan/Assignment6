@@ -6,6 +6,9 @@ import java.util.List;
 
 import javax.swing.table.AbstractTableModel;
 
+import session.ItemLogGatewayBeanRemote;
+import session.LogEntry;
+
 /**
  * Inventory model, this class keeps track of the current inventory as well as validating
  * any newly created items, and edited items.
@@ -35,6 +38,11 @@ public class InventoryModel extends AbstractTableModel {
      * The inventory array list
      */
     private ArrayList<InventoryItem> inventory;
+    
+    /**
+     * Gateway remote for logs
+     */
+    private ItemLogGatewayBeanRemote gatewayRemote;
 
     /**
      * Column names for the table
@@ -290,6 +298,12 @@ public class InventoryModel extends AbstractTableModel {
     	}
     	updateInventoryModelObserver();
     	update();
+    }
+    
+    public ArrayList<LogEntry> getLogList(int row) {
+    	ArrayList<LogEntry> logs = new ArrayList<LogEntry>();
+    	logs = gatewayRemote.getLogEntries(inventory.get(row).getIdNumber());
+    	return logs;
     }
     
     /**

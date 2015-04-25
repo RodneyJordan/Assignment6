@@ -34,6 +34,7 @@ public class InventoryView extends JFrame implements TableObserver
     private JButton deleteItem;
     private JButton parts;
     private JButton templates;
+    private JButton logs;
 
     /**
      * The table for this view
@@ -119,12 +120,14 @@ public class InventoryView extends JFrame implements TableObserver
         deleteItem = new JButton("Delete");
         parts = new JButton("Parts");
         templates = new JButton("Templates");
+        logs = new JButton("Log");
 
         buttonPanel.add(editItem);
         buttonPanel.add(addToTable);
         buttonPanel.add(deleteItem);
         buttonPanel.add(parts);
         buttonPanel.add(templates);
+        buttonPanel.add(logs);
     }
 
     /**
@@ -147,6 +150,7 @@ public class InventoryView extends JFrame implements TableObserver
         deleteItem.addActionListener(c);
         parts.addActionListener(c);
         templates.addActionListener(c);
+        logs.addActionListener(c);
     }
 
     /**

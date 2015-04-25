@@ -2,6 +2,7 @@ package controllers;
 
 import models.InventoryItem;
 import models.InventoryModel;
+import models.ItemLogTableModel;
 import models.PartsModel;
 import models.ProductTemplatePartsGateway;
 import models.ProductTemplatePartsModel;
@@ -9,6 +10,7 @@ import models.TemplateGateway;
 import models.TemplateModel;
 import session.Session;
 import views.InventoryView;
+import views.ItemLogView;
 
 import java.util.Timer;
 import java.awt.event.*;
@@ -54,6 +56,11 @@ public class InventoryController implements ActionListener
      * Product Template Parts Gateway
      */
     private ProductTemplatePartsGateway ptpg;
+    
+    /**
+     * An Item Log view
+     */
+    private ItemLogView logView;
     
     /**
      * Product Template Parts model
@@ -134,6 +141,14 @@ public class InventoryController implements ActionListener
         	else {
         		JOptionPane.showMessageDialog(null, "You are not authorized to view the templates", "Error", JOptionPane.ERROR_MESSAGE);
         	}
+        }
+        else if(actionCommand.equals("Log")) {
+        	int selectedRow = inventoryView.getSelectedRow();
+        	ItemLogTableModel tableModel = new ItemLogTableModel(inventoryModel.getLogList(selectedRow));
+        	logView = new ItemLogView(tableModel);
+        }
+        else if(actionCommand.equals("Close")) {
+        	logView.closeWindow();
         }
 
     }

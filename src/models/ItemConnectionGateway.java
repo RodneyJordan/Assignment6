@@ -147,7 +147,8 @@ public class ItemConnectionGateway {
 					preparedStatement.setInt(2, item.getQuantity());
 					preparedStatement.executeUpdate();
 					connection.commit();
-					addToInventoryProduct((int) preparedStatement.getLastInsertID(), item);
+					id = (int) preparedStatement.getLastInsertID();
+					addToInventoryProduct(id , item);
 					
 					
 					preparedStatement.close();

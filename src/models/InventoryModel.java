@@ -125,7 +125,6 @@ public class InventoryModel extends AbstractTableModel {
         updateInventoryModelObserver();
         update();
         LogEntry entry = new LogEntry("added");
-        System.out.println(id);
         gatewayRemote.addLogEntry(id, entry);
         
         return hasError;
@@ -133,6 +132,7 @@ public class InventoryModel extends AbstractTableModel {
     
     public boolean addItemProduct(ProductTemplate product, String location, ProductTemplatePartsModel productTemplatePartsModel, PartsModel partsModel) {
     	boolean duplicateProduct = true;
+    	int id = 0;
     	this.productTemplatePartsModel = productTemplatePartsModel;
     	this.partsModel = partsModel;
     	createProductInventoryItem(product, location);
@@ -152,12 +152,14 @@ public class InventoryModel extends AbstractTableModel {
     			}
     		}
     		if(!duplicateProduct){
-    			itemConnectionGateway.addItemToDatabase(inventoryItem, 1);
+    			id = itemConnectionGateway.addItemToDatabase(inventoryItem, 1);
     			inventory = itemConnectionGateway.getItem();
     		}
     	}
     	updateInventoryModelObserver();
     	update();
+    	LogEntry entry = new LogEntry("added");
+        gatewayRemote.addLogEntry(id, entry);
     	
     	return hasError;
     }
@@ -167,7 +169,6 @@ public class InventoryModel extends AbstractTableModel {
     	ArrayList<ProductTemplateParts> usedParts = new ArrayList<ProductTemplateParts>();
     	boolean quantityNeeded = true;
     	boolean enoughStock = false;
-    	// removes parts not used in this template
     	for(ProductTemplateParts p : templateParts) {
     		if(product.getId() == p.getProductTemplateId()) {
     			usedParts.add(p);
@@ -316,6 +317,10 @@ public class InventoryModel extends AbstractTableModel {
     	System.out.println("in getLogList, number passed is " + row);
     	try {
     		logs = gatewayRemote.getLogEntries(inventory.get(row).getIdNumber());
+    		for(int i = 0; i < logs.size(); i++) {
+    			System.out.println("i is " + i + " description is " + logs.get(i).getDescription());
+    		}
+    		System.out.println("size of log passed back from data base" + logs.size());
     	} catch(NullPointerException e) {
     		e.printStackTrace();
     	}
@@ -331,6 +336,7 @@ public class InventoryModel extends AbstractTableModel {
      */
     public boolean editInventoryItem(Part part, String location, int quantity, InventoryItem inventoryItem) {
     	String oldLocation = inventoryItem.getLocation();
+    	int oldQuantity = inventoryItem.getQuantity();
     	hasError = validate.isValidEditItem(location, quantity);
     	System.out.println(hasError);
     	if(!hasError) {
@@ -359,6 +365,16 @@ public class InventoryModel extends AbstractTableModel {
     	
     	updateInventoryModelObserver();
     	update();
+    	if(oldQuantity != quantity) {
+    		LogEntry entry = new LogEntry("Quantity changed from " + oldQuantity + " to " + quantity);
+    		System.out.println("Adding entry description " + entry.getDescription());
+            gatewayRemote.addLogEntry(inventoryItem.getIdNumber(), entry);
+    	}
+    	if(!oldLocation.equals(location)) {
+    		LogEntry entry = new LogEntry("Location changed from " + oldLocation + " to " + location);
+    		System.out.println("Adding entry description " + entry.getDescription());
+            gatewayRemote.addLogEntry(inventoryItem.getIdNumber(), entry);
+    	}
     	
     	return hasError;
     }

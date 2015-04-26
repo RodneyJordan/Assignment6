@@ -61,7 +61,7 @@ public class LogEntry implements Serializable {
 	 * Gets the date as a String
 	 */
 	public String getDateString() {
-		SimpleDateFormat form = new SimpleDateFormat("dd-MM-yyyy hh:mm:ss");
+		SimpleDateFormat form = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss:SS");
 	    System.out.println(form.format(this.date));
 	    String str = form.format(this.date);
 	    return str;
@@ -72,7 +72,7 @@ public class LogEntry implements Serializable {
 	 */
 	public void setDateFromString(String string) {
 		//SimpleDateFormat format = new SimpleDateFormat("dd-mm-yyyy hh:mm:ss");
-		DateFormat format = new SimpleDateFormat("dd/MM/yyyy hh:mm");
+		DateFormat format = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss:SS");
 		try {
 			this.date = format.parse(string);
 			System.out.println(this.date);

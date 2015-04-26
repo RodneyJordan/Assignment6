@@ -2,8 +2,10 @@ package models;
 
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
+import java.util.Random;
 
 import javax.naming.InitialContext;
 import javax.swing.table.AbstractTableModel;
@@ -77,6 +79,11 @@ public class InventoryModel extends AbstractTableModel {
      */
     private int i;
     private int j;
+    
+    /**
+     * Random number generator 
+     */
+    static Random r = new Random();
 
     /**
      * true if errors, false otherwise
@@ -314,17 +321,38 @@ public class InventoryModel extends AbstractTableModel {
     }
     
     public ArrayList<LogEntry> getLogList(int row) {
-    	System.out.println("in getLogList, number passed is " + row);
     	try {
     		logs = gatewayRemote.getLogEntries(inventory.get(row).getIdNumber());
-    		for(int i = 0; i < logs.size(); i++) {
-    			System.out.println("i is " + i + " description is " + logs.get(i).getDescription());
-    		}
-    		System.out.println("size of log passed back from data base" + logs.size());
+    		logs = sort(logs);
     	} catch(NullPointerException e) {
     		e.printStackTrace();
     	}
     	return logs;
+    }
+    
+    public static ArrayList<LogEntry> sort(ArrayList<LogEntry> list) {
+        if (list.size() <= 1) 
+            return list;
+        int rotationplacement = r.nextInt(list.size());
+        LogEntry rotation = list.get(rotationplacement);
+        list.remove(rotationplacement);
+        ArrayList<LogEntry> lower = new ArrayList<LogEntry>();
+        ArrayList<LogEntry> higher = new ArrayList<LogEntry>();
+        for (int i = 0; i < list.size(); i++) {
+            if (list.get(i).getDate().before(rotation.getDate()) || list.get(i).getDate().equals(rotation.getDate())) {
+            	lower.add(list.get(i));
+            }
+            else
+                higher.add(list.get(i));
+        }
+        sort(lower);
+        sort(higher);
+
+        list.clear();
+        list.addAll(lower);
+        list.add(rotation);
+        list.addAll(higher);
+        return list;
     }
     
     /**
@@ -381,6 +409,7 @@ public class InventoryModel extends AbstractTableModel {
     
     public boolean editInventoryItemProduct(ProductTemplate product, String location, int quantity, InventoryItem inventoryItem) {
     	String oldLocation = inventoryItem.getLocation();
+    	int oldQuantity = inventoryItem.getQuantity();
     	System.out.println(product.getDescription() + " " + inventoryItem.getLocation() + " " + "new location " + location);
     	hasError = false; // need to validate the edited product
     	if(!hasError) {
@@ -409,6 +438,16 @@ public class InventoryModel extends AbstractTableModel {
     	
     	updateInventoryModelObserver();
     	update();
+    	if(oldQuantity != quantity) {
+    		LogEntry entry = new LogEntry("Quantity changed from " + oldQuantity + " to " + quantity);
+    		System.out.println("Adding entry description " + entry.getDescription());
+            gatewayRemote.addLogEntry(inventoryItem.getIdNumber(), entry);
+    	}
+    	if(!oldLocation.equals(location)) {
+    		LogEntry entry = new LogEntry("Location changed from " + oldLocation + " to " + location);
+    		System.out.println("Adding entry description " + entry.getDescription());
+            gatewayRemote.addLogEntry(inventoryItem.getIdNumber(), entry);
+    	}
     	
     	return hasError;
     }

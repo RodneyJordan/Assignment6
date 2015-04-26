@@ -1,9 +1,12 @@
 package controllers;
 
+import models.DetailTemplateModel;
 import models.InventoryItem;
 import models.InventoryModel;
 import models.ItemLogTableModel;
 import models.PartsModel;
+import models.ProductTemplate;
+import models.ProductTemplateParts;
 import models.ProductTemplatePartsGateway;
 import models.ProductTemplatePartsModel;
 import models.TemplateGateway;
@@ -58,6 +61,10 @@ public class InventoryController implements ActionListener
      */
     private TemplateModel templateModel;
     
+    private DetailTemplateModel detailTemplateModel;
+    
+    private ProductTemplateParts productTemplatePart;
+    
     /**
      * Product Template Parts Gateway
      */
@@ -77,6 +84,12 @@ public class InventoryController implements ActionListener
      * The session
      */
     private Session session;
+    
+    /**
+     * List of part id numbers
+     */
+    private ArrayList<Integer> partIds = new ArrayList<Integer>();
+    private ArrayList<Integer> quantity = new ArrayList<Integer>();
 
     /**
      * Constructor
@@ -150,7 +163,6 @@ public class InventoryController implements ActionListener
         }
         else if(actionCommand.equals("Log")) {
         	int selectedRow = inventoryView.getSelectedRow();
-        	//inventoryModel.getInventoryItem(selectedRow);
         	ItemLogTableModel tableModel = new ItemLogTableModel(inventoryModel.getLogList(selectedRow));
         	logView = new ItemLogView(tableModel);
         	logView.registerListeners(this);
@@ -172,9 +184,10 @@ public class InventoryController implements ActionListener
         {
             if(isAlreadyOneClick && (inventoryView.getSelectedRow() == inventoryView.getLastSelectedRow()))
             {
-                DetailController detailController = new DetailController
-                        		(inventoryModel ,inventoryModel.getInventoryItem((inventoryView.getSelectedRow())), partsModel, 
-                        		templateModel,productTemplatePartsModel, session);
+            	DetailController detailController = new DetailController
+                        	(inventoryModel ,inventoryModel.getInventoryItem((inventoryView.getSelectedRow())), partsModel, 
+                        	templateModel,productTemplatePartsModel, session, inventoryView.getSelectedRow());
+            	
                 isAlreadyOneClick = false;
             }
             else

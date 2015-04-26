@@ -66,7 +66,7 @@ public class DetailView extends JFrame
      * Constructor
      * @param item : The inventory item that details will be shown for.
      */
-    public DetailView(InventoryItem item, InventoryModel model)
+    public DetailView(InventoryItem item, InventoryModel model, int selectedRow)
     {
         super("Inventory Item");
 
@@ -78,9 +78,14 @@ public class DetailView extends JFrame
 
         setUpPanel1(item.getIdNumber());
         infoPanel.add(panel1);
-
-        setUpPanel2(item.getPart().getPartName());
-        infoPanel.add(panel2);
+        
+        if(item.getPart() != null) {
+        	setUpPanel2(item.getPart().getPartName());
+        }
+        else {
+        	setUpPanel2Product(item.getProduct().getDescription());
+        }
+        	infoPanel.add(panel2);
 
         setUpPanel3(item.getLocation());
         infoPanel.add(panel3);
@@ -89,8 +94,8 @@ public class DetailView extends JFrame
         infoPanel.add(panel4);
         
         add(infoPanel);
-        
-        setUpPanel5(model.getLogList(item.getIdNumber()));
+        System.out.println(item.getIdNumber());
+        setUpPanel5(model.getLogList(selectedRow));
         add(panel5);
 
         setUpButtonPanel();
@@ -129,6 +134,16 @@ public class DetailView extends JFrame
         panel2.setLayout(layout);
         panel2.add(messagePartName);
         panel2.add(infoPartName);
+    }
+    
+    public void setUpPanel2Product(String productName) {
+    	JLabel messageProductName = new JLabel("Product Name", SwingConstants.CENTER);
+    	JLabel infoProductName = new JLabel(productName, SwingConstants.CENTER);
+    	
+    	panel2 = new JPanel();
+    	panel2.setLayout(layout);
+    	panel2.add(messageProductName);
+    	panel2.add(infoProductName);
     }
     
     /**

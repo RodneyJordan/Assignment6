@@ -61,6 +61,11 @@ public class InventoryModel extends AbstractTableModel {
      * A list of inventory model observers
      */
     private List<InventoryModelObserver> inventoryModelObservers = new ArrayList<InventoryModelObserver>();
+    
+    /**
+     * A list of logs
+     */
+    private ArrayList<LogEntry> logs = new ArrayList<LogEntry>();
 
     /**
      * An error observer
@@ -308,8 +313,7 @@ public class InventoryModel extends AbstractTableModel {
     }
     
     public ArrayList<LogEntry> getLogList(int row) {
-    	ArrayList<LogEntry> logs = new ArrayList<LogEntry>();
-    	LogEntry log = new LogEntry("test");
+    	System.out.println("in getLogList, number passed is " + row);
     	try {
     		logs = gatewayRemote.getLogEntries(inventory.get(row).getIdNumber());
     	} catch(NullPointerException e) {

@@ -60,13 +60,13 @@ public class DetailController implements ActionListener
      * @param inventoryItem
      */
     public DetailController(InventoryModel inventoryModel, InventoryItem inventoryItem, PartsModel partsModel, TemplateModel templateModel,
-    		ProductTemplatePartsModel productTemplatePartsModel, Session session)
+    		ProductTemplatePartsModel productTemplatePartsModel, Session session, int selectedRow)
     {
     	this.session = session;
     	this.partsModel = partsModel;
         this.inventoryItem = inventoryItem;
         this.inventoryModel = inventoryModel;
-        detailView = new DetailView(this.inventoryItem, this.inventoryModel);
+        detailView = new DetailView(this.inventoryItem, this.inventoryModel, selectedRow);
         this.templateModel = templateModel;
         this.productTemplatePartsModel = productTemplatePartsModel; 
         this.detailView.registerListeners(this);

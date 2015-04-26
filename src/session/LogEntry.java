@@ -46,6 +46,10 @@ public class LogEntry implements Serializable {
 		this.description = description;
 	}
 	
+	public LogEntry() {
+		
+	}
+	
 	/**
 	 * Gets the date of and entry
 	 */

@@ -3,9 +3,12 @@ package models;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 
+import javax.naming.InitialContext;
 import javax.swing.table.AbstractTableModel;
 
+import session.AuthenticationGatewayBeanRemote;
 import session.ItemLogGatewayBeanRemote;
 import session.LogEntry;
 
@@ -42,7 +45,7 @@ public class InventoryModel extends AbstractTableModel {
     /**
      * Gateway remote for logs
      */
-    private ItemLogGatewayBeanRemote gatewayRemote;
+    private ItemLogGatewayBeanRemote gatewayRemote = null;
 
     /**
      * Column names for the table
@@ -94,6 +97,7 @@ public class InventoryModel extends AbstractTableModel {
         this.itemConnectionGateway = icg;
         this.inventory = icg.getItem();
         this.registerInventoryModelObserver(errorObserver);
+        initSession();
     }
 
     /**
@@ -108,12 +112,16 @@ public class InventoryModel extends AbstractTableModel {
 
     public boolean addItemPart(Part part, String location, String quantity) {
     	createInventoryItem(part, location, quantity);
+    	int id = 0;
         if(!hasError) {
-        	itemConnectionGateway.addItemToDatabase(inventoryItem, 0);
+        	id = itemConnectionGateway.addItemToDatabase(inventoryItem, 0);
         	inventory = itemConnectionGateway.getItem();
         }
         updateInventoryModelObserver();
         update();
+        LogEntry entry = new LogEntry("added");
+        System.out.println(id);
+        gatewayRemote.addLogEntry(id, entry);
         
         return hasError;
     }
@@ -139,7 +147,6 @@ public class InventoryModel extends AbstractTableModel {
     			}
     		}
     		if(!duplicateProduct){
-    			System.out.println("ARE YOU FUCKIGN GETTING CALLED BRO??");
     			itemConnectionGateway.addItemToDatabase(inventoryItem, 1);
     			inventory = itemConnectionGateway.getItem();
     		}
@@ -302,6 +309,7 @@ public class InventoryModel extends AbstractTableModel {
     
     public ArrayList<LogEntry> getLogList(int row) {
     	ArrayList<LogEntry> logs = new ArrayList<LogEntry>();
+    	LogEntry log = new LogEntry("test");
     	try {
     		logs = gatewayRemote.getLogEntries(inventory.get(row).getIdNumber());
     	} catch(NullPointerException e) {
@@ -398,10 +406,12 @@ public class InventoryModel extends AbstractTableModel {
     		hasError = false;
     		for(i = 0; i < inventory.size(); i++) {
     			if(inventory.get(i).getLocation().equalsIgnoreCase(location)) {
-    				if(inventory.get(i).getPart().equals(part)) {
-    					hasError = true;
-    					validate.addError("Part already exists at this location");
-    					i = inventory.size();
+    				if(inventory.get(i).getPart() != null) {
+    					if(inventory.get(i).getPart().equals(part)) {
+    						hasError = true;
+    						validate.addError("Part already exists at this location");
+    						i = inventory.size();
+    					}
     				}
     			}
     		}
@@ -486,4 +496,18 @@ public class InventoryModel extends AbstractTableModel {
     public String getErrors() {
         return validate.getErrors();
     }
+    
+    public void initSession() {
+		try {
+			Properties props = new Properties();
+			props.put("org.omg.COBRA.ORBInitialHost", "localhost");
+			props.put("org.omg.COBRA.ORBInitialPort", 3700);
+			
+			InitialContext itx = new InitialContext(props);
+			gatewayRemote = (ItemLogGatewayBeanRemote) itx.lookup("java:global/cs4743_session_bean/ItemLogGatewayBean!session.ItemLogGatewayBeanRemote");
+		} catch(javax.naming.NamingException e1) {
+			e1.printStackTrace();
+		}
+		//updateTitle();
+	}
 }

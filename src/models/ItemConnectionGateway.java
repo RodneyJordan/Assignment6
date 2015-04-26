@@ -118,10 +118,11 @@ public class ItemConnectionGateway {
 	 * @param item
 	 * @param typeFlag : 0 = part, 1 = new product at location, 2 = product already exists at location, increase quantity by 1
 	 */
-	public void addItemToDatabase(InventoryItem item, int typeFlag) {
+	public int addItemToDatabase(InventoryItem item, int typeFlag) {
 		
 		createConnection();
 		preparedStatement = null;
+		int id = 0;
 		String query = "Insert into ase_inventoryItems(location, quantity) values(?, ?)";
 			
 			if(typeFlag == 0){
@@ -130,7 +131,8 @@ public class ItemConnectionGateway {
 					preparedStatement.setString(1, item.getLocation());
 					preparedStatement.setInt(2, item.getQuantity());
 					preparedStatement.execute();
-					addToInventoryPart((int) preparedStatement.getLastInsertID(), item);
+					id = (int) preparedStatement.getLastInsertID();
+					addToInventoryPart(id , item);
 					
 					preparedStatement.close();
 					connection.close();
@@ -173,7 +175,7 @@ public class ItemConnectionGateway {
 				}
 			}
 			
-			
+			return id;	
 	}
 	
 	/**

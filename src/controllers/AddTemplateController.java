@@ -45,6 +45,9 @@ public class AddTemplateController implements ActionListener {
 			if(!templateModel.addTemplate(addTemplateView.productNumberTextField.getText(), addTemplateView.descriptionTextField.getText())) {
 				addTemplateView.closeWindow();
 			}
+			else {
+				System.out.println("Something went wrong... fix it");
+			}
 		}
 		else if(actionCommand.equals("Cancel")) {
 			addTemplateView.closeWindow();

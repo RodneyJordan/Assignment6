@@ -41,6 +41,7 @@ public class ItemLogTableModel extends AbstractTableModel {
 	public Object getValueAt(int rowIndex, int columnIndex) {
 		LogEntry l = logEntries.get(rowIndex);
 		if(columnIndex == 0) {
+			System.out.println("builing table : date : " + l.getDateString());
 			return l.getDateString();
 		}
 		else if(columnIndex == 1) {

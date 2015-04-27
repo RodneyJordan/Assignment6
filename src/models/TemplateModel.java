@@ -86,6 +86,7 @@ public class TemplateModel extends AbstractTableModel {
     public boolean addTemplate(String productNumber, String description) {
     	boolean sameName = createProductTemplate(productNumber, description);
     	if(sameName) {
+    		System.out.println("same name");
     		return true;
     	}
         if(!hasError) {
@@ -130,6 +131,7 @@ public class TemplateModel extends AbstractTableModel {
     	}
     	if(validate.isValidTemplate(temp)) {
     		hasError = false;
+    		System.out.println("temp validated");
     		for(i = 0; i < templates.size(); i++) {
     			if(temp.equals(templates.get(i))) {
     				hasError = true;

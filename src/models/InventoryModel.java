@@ -151,7 +151,7 @@ public class InventoryModel extends AbstractTableModel {
     					duplicateProduct = true;
     					try {
 							inventory.get(i).setQuantity(inventory.get(i).getQuantity() + 1);
-							itemConnectionGateway.addItemToDatabase(inventory.get(i), 2);
+							id = itemConnectionGateway.addItemToDatabase(inventory.get(i), 2);
 						} catch (Exception e) {
 							e.printStackTrace();
 						}
@@ -165,8 +165,10 @@ public class InventoryModel extends AbstractTableModel {
     	}
     	updateInventoryModelObserver();
     	update();
-    	LogEntry entry = new LogEntry("added");
-        gatewayRemote.addLogEntry(id, entry);
+    	if(id > 0) {
+    		LogEntry entry = new LogEntry("added");
+    		gatewayRemote.addLogEntry(id, entry);
+    	}
     	
     	return hasError;
     }

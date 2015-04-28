@@ -79,11 +79,11 @@ public class ItemConnectionGateway {
 		ArrayList<InventoryItem> items = new ArrayList<InventoryItem>();
 		ResultSet resultSet = null;
 		preparedStatement = null;
-		String queryParts = "SELECT i.id, i.location, i.quantity, p.id, p.number, p.name, p.vendor, p.unit, p.extNumber "
+		String queryParts = "SELECT i.id, i.location, i.quantity, i.timestamp, p.id, p.number, p.name, p.vendor, p.unit, p.extNumber "
 				+ "FROM ase_inventoryParts as ip INNER JOIN ase_inventoryItems as i ON i.id = ip.inventory_id INNER JOIN "
 				+ "ase_parts as p ON p.id = ip.part_id"; // WHERE ip.inventory_id = ?";
 		
-		String queryProducts = "SELECT i.id as inventoryId, i.quantity, i.location, tp.product_id, tp.template_id, t.number, t.description " 
+		String queryProducts = "SELECT i.id as inventoryId, i.quantity, i.location, i.timestamp, tp.product_id, tp.template_id, t.number, t.description " 
 				+ "FROM ase_inventoryItems as i INNER JOIN ase_inventoryProds as ip ON i.id = ip.inventory_id " 
 				+ "INNER JOIN ase_templateProds as tp ON ip.product_id = tp.product_id INNER JOIN ase_templates as t ON tp.template_id = t.id";
 		try {
@@ -91,25 +91,32 @@ public class ItemConnectionGateway {
 			preparedStatement = (PreparedStatement) connection.prepareStatement(queryParts);
 			resultSet = preparedStatement.executeQuery();
 			Part temp = null;
+			InventoryItem tempInventory = null;
 			while(resultSet.next()) {
 				temp = new Part(resultSet.getInt("id"), resultSet.getString("number"), resultSet.getString("name"),
 						resultSet.getString("vendor"), resultSet.getString("unit"), resultSet.getString("extNumber"));
-				items.add(new InventoryItem(resultSet.getInt("id"), temp, resultSet.getString("location"), resultSet.getInt("quantity")));
+				tempInventory = new InventoryItem(resultSet.getInt("id"), temp, resultSet.getString("location"), resultSet.getInt("quantity"));
+				tempInventory.setTimeStamp(resultSet.getString("timestamp").trim());
+				items.add(tempInventory);
 			}
 			
 			//products gathering
 			preparedStatement = (PreparedStatement) connection.prepareStatement(queryProducts);
 			resultSet = preparedStatement.executeQuery();
 			ProductTemplate temp2 = null;
+			InventoryItem tempInventory2 = null;
 			while(resultSet.next()) {
 				temp2 = new ProductTemplate(resultSet.getInt("product_id"), resultSet.getString("number"), resultSet.getString("description"));
-				items.add(new InventoryItem(resultSet.getInt("inventoryId"), temp2, resultSet.getString("location"), resultSet.getInt("quantity")));
+				tempInventory2 = new InventoryItem(resultSet.getInt("inventoryId"), temp2, resultSet.getString("location"), resultSet.getInt("quantity"));
+				tempInventory2.setTimeStamp(resultSet.getString("timestamp".trim()));
+				items.add(tempInventory2);
 			}
 			
 			connection.close();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
+		System.out.println(items.size());
 		return items;
 	}
 	

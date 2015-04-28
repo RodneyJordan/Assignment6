@@ -116,7 +116,7 @@ public class ItemConnectionGateway {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		System.out.println(items.size());
+		//System.out.println(items.size());
 		return items;
 	}
 	

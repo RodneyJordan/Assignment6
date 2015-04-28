@@ -103,10 +103,18 @@ public class TemplateGateway {
 		createConnection();
 		preparedStatement = null;
 		String query = "Insert into ase_templates(number, description) values(?, ?)";
+		String relQuery = "Insert into ase_templateProds(template_id, product_id) values(?,?)";
 		try {
 			preparedStatement = (PreparedStatement) connection.prepareStatement(query);
 			preparedStatement.setString(1, template.getProductNumber());
 			preparedStatement.setString(2, template.getDescription());
+			preparedStatement.execute();
+			
+			template.setId((int)preparedStatement.getLastInsertID());
+
+			preparedStatement = (PreparedStatement) connection.prepareStatement(relQuery);
+			preparedStatement.setInt(1, template.getId());
+			preparedStatement.setInt(2, template.getId());
 			preparedStatement.execute();
 			preparedStatement.close();
 			connection.close();

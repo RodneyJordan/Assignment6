@@ -143,6 +143,9 @@ public class TemplateModel extends AbstractTableModel {
     	if(!hasError) {
     		productTemplate = new ProductTemplate(productNumber, description); 
     	}
+    	updateTemplateModelObserver();
+        errorObserver.update(this);
+    	update();
     	return hasError;
     }
 

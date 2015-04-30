@@ -14,4 +14,10 @@ public interface ItemLogGatewayBeanRemote {
 	public LogEntry getLogEntry(int Id, String date);
 	
 	public ArrayList<LogEntry> getLogEntries(int Id);
+	
+	public void registerObserver(LogObserverRemote o);
+	
+	public void unregisterObserver(LogObserverRemote o);
+	
+	public void setEditText(String txt);
 }

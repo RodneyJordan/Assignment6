@@ -2,9 +2,17 @@ package models;
 
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Properties;
+import java.util.Random;
 
+import javax.naming.InitialContext;
 import javax.swing.table.AbstractTableModel;
+
+import session.AuthenticationGatewayBeanRemote;
+import session.ItemLogGatewayBeanRemote;
+import session.LogEntry;
 
 /**
  * Inventory model, this class keeps track of the current inventory as well as validating
@@ -35,6 +43,11 @@ public class InventoryModel extends AbstractTableModel {
      * The inventory array list
      */
     private ArrayList<InventoryItem> inventory;
+    
+    /**
+     * Gateway remote for logs
+     */
+    private ItemLogGatewayBeanRemote gatewayRemote = null;
 
     /**
      * Column names for the table
@@ -50,6 +63,11 @@ public class InventoryModel extends AbstractTableModel {
      * A list of inventory model observers
      */
     private List<InventoryModelObserver> inventoryModelObservers = new ArrayList<InventoryModelObserver>();
+    
+    /**
+     * A list of logs
+     */
+    private ArrayList<LogEntry> logs = new ArrayList<LogEntry>();
 
     /**
      * An error observer
@@ -61,6 +79,11 @@ public class InventoryModel extends AbstractTableModel {
      */
     private int i;
     private int j;
+    
+    /**
+     * Random number generator 
+     */
+    static Random r = new Random();
 
     /**
      * true if errors, false otherwise
@@ -86,6 +109,7 @@ public class InventoryModel extends AbstractTableModel {
         this.itemConnectionGateway = icg;
         this.inventory = icg.getItem();
         this.registerInventoryModelObserver(errorObserver);
+        initSession();
     }
 
     /**
@@ -100,18 +124,22 @@ public class InventoryModel extends AbstractTableModel {
 
     public boolean addItemPart(Part part, String location, String quantity) {
     	createInventoryItem(part, location, quantity);
+    	int id = 0;
         if(!hasError) {
-        	itemConnectionGateway.addItemToDatabase(inventoryItem, 0);
+        	id = itemConnectionGateway.addItemToDatabase(inventoryItem, 0);
         	inventory = itemConnectionGateway.getItem();
         }
         updateInventoryModelObserver();
         update();
+        LogEntry entry = new LogEntry("added");
+        gatewayRemote.addLogEntry(id, entry);
         
         return hasError;
     }
     
     public boolean addItemProduct(ProductTemplate product, String location, ProductTemplatePartsModel productTemplatePartsModel, PartsModel partsModel) {
     	boolean duplicateProduct = true;
+    	int id = 0;
     	this.productTemplatePartsModel = productTemplatePartsModel;
     	this.partsModel = partsModel;
     	createProductInventoryItem(product, location);
@@ -123,7 +151,7 @@ public class InventoryModel extends AbstractTableModel {
     					duplicateProduct = true;
     					try {
 							inventory.get(i).setQuantity(inventory.get(i).getQuantity() + 1);
-							itemConnectionGateway.addItemToDatabase(inventory.get(i), 2);
+							id = itemConnectionGateway.addItemToDatabase(inventory.get(i), 2);
 						} catch (Exception e) {
 							e.printStackTrace();
 						}
@@ -131,13 +159,16 @@ public class InventoryModel extends AbstractTableModel {
     			}
     		}
     		if(!duplicateProduct){
-    			System.out.println("ARE YOU FUCKIGN GETTING CALLED BRO??");
-    			itemConnectionGateway.addItemToDatabase(inventoryItem, 1);
+    			id = itemConnectionGateway.addItemToDatabase(inventoryItem, 1);
     			inventory = itemConnectionGateway.getItem();
     		}
     	}
     	updateInventoryModelObserver();
     	update();
+    	if(id > 0) {
+    		LogEntry entry = new LogEntry("added");
+    		gatewayRemote.addLogEntry(id, entry);
+    	}
     	
     	return hasError;
     }
@@ -147,7 +178,6 @@ public class InventoryModel extends AbstractTableModel {
     	ArrayList<ProductTemplateParts> usedParts = new ArrayList<ProductTemplateParts>();
     	boolean quantityNeeded = true;
     	boolean enoughStock = false;
-    	// removes parts not used in this template
     	for(ProductTemplateParts p : templateParts) {
     		if(product.getId() == p.getProductTemplateId()) {
     			usedParts.add(p);
@@ -292,6 +322,41 @@ public class InventoryModel extends AbstractTableModel {
     	update();
     }
     
+    public ArrayList<LogEntry> getLogList(int row) {
+    	try {
+    		logs = gatewayRemote.getLogEntries(inventory.get(row).getIdNumber());
+    		logs = sort(logs);
+    	} catch(NullPointerException e) {
+    		e.printStackTrace();
+    	}
+    	return logs;
+    }
+    
+    public static ArrayList<LogEntry> sort(ArrayList<LogEntry> list) {
+        if (list.size() <= 1) 
+            return list;
+        int rotationplacement = r.nextInt(list.size());
+        LogEntry rotation = list.get(rotationplacement);
+        list.remove(rotationplacement);
+        ArrayList<LogEntry> lower = new ArrayList<LogEntry>();
+        ArrayList<LogEntry> higher = new ArrayList<LogEntry>();
+        for (int i = 0; i < list.size(); i++) {
+            if (list.get(i).getDate().before(rotation.getDate()) || list.get(i).getDate().equals(rotation.getDate())) {
+            	lower.add(list.get(i));
+            }
+            else
+                higher.add(list.get(i));
+        }
+        sort(lower);
+        sort(higher);
+
+        list.clear();
+        list.addAll(lower);
+        list.add(rotation);
+        list.addAll(higher);
+        return list;
+    }
+    
     /**
      * edits an item in the inventory
      * @param location
@@ -301,6 +366,7 @@ public class InventoryModel extends AbstractTableModel {
      */
     public boolean editInventoryItem(Part part, String location, int quantity, InventoryItem inventoryItem) {
     	String oldLocation = inventoryItem.getLocation();
+    	int oldQuantity = inventoryItem.getQuantity();
     	hasError = validate.isValidEditItem(location, quantity);
     	System.out.println(hasError);
     	if(!hasError) {
@@ -329,12 +395,23 @@ public class InventoryModel extends AbstractTableModel {
     	
     	updateInventoryModelObserver();
     	update();
+    	if(oldQuantity != quantity) {
+    		LogEntry entry = new LogEntry("Quantity changed from " + oldQuantity + " to " + quantity);
+    		System.out.println("Adding entry description " + entry.getDescription());
+            gatewayRemote.addLogEntry(inventoryItem.getIdNumber(), entry);
+    	}
+    	if(!oldLocation.equals(location)) {
+    		LogEntry entry = new LogEntry("Location changed from " + oldLocation + " to " + location);
+    		System.out.println("Adding entry description " + entry.getDescription());
+            gatewayRemote.addLogEntry(inventoryItem.getIdNumber(), entry);
+    	}
     	
     	return hasError;
     }
     
     public boolean editInventoryItemProduct(ProductTemplate product, String location, int quantity, InventoryItem inventoryItem) {
     	String oldLocation = inventoryItem.getLocation();
+    	int oldQuantity = inventoryItem.getQuantity();
     	System.out.println(product.getDescription() + " " + inventoryItem.getLocation() + " " + "new location " + location);
     	hasError = false; // need to validate the edited product
     	if(!hasError) {
@@ -363,6 +440,16 @@ public class InventoryModel extends AbstractTableModel {
     	
     	updateInventoryModelObserver();
     	update();
+    	if(oldQuantity != quantity) {
+    		LogEntry entry = new LogEntry("Quantity changed from " + oldQuantity + " to " + quantity);
+    		System.out.println("Adding entry description " + entry.getDescription());
+            gatewayRemote.addLogEntry(inventoryItem.getIdNumber(), entry);
+    	}
+    	if(!oldLocation.equals(location)) {
+    		LogEntry entry = new LogEntry("Location changed from " + oldLocation + " to " + location);
+    		System.out.println("Adding entry description " + entry.getDescription());
+            gatewayRemote.addLogEntry(inventoryItem.getIdNumber(), entry);
+    	}
     	
     	return hasError;
     }
@@ -380,10 +467,12 @@ public class InventoryModel extends AbstractTableModel {
     		hasError = false;
     		for(i = 0; i < inventory.size(); i++) {
     			if(inventory.get(i).getLocation().equalsIgnoreCase(location)) {
-    				if(inventory.get(i).getPart().equals(part)) {
-    					hasError = true;
-    					validate.addError("Part already exists at this location");
-    					i = inventory.size();
+    				if(inventory.get(i).getPart() != null) {
+    					if(inventory.get(i).getPart().equals(part)) {
+    						hasError = true;
+    						validate.addError("Part already exists at this location");
+    						i = inventory.size();
+    					}
     				}
     			}
     		}
@@ -468,4 +557,18 @@ public class InventoryModel extends AbstractTableModel {
     public String getErrors() {
         return validate.getErrors();
     }
+    
+    public void initSession() {
+		try {
+			Properties props = new Properties();
+			props.put("org.omg.COBRA.ORBInitialHost", "localhost");
+			props.put("org.omg.COBRA.ORBInitialPort", 3700);
+			
+			InitialContext itx = new InitialContext(props);
+			gatewayRemote = (ItemLogGatewayBeanRemote) itx.lookup("java:global/cs4743_session_bean/ItemLogGatewayBean!session.ItemLogGatewayBeanRemote");
+		} catch(javax.naming.NamingException e1) {
+			e1.printStackTrace();
+		}
+		//updateTitle();
+	}
 }

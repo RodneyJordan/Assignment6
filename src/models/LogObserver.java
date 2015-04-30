@@ -4,10 +4,12 @@ import java.rmi.RemoteException;
 
 import javax.rmi.PortableRemoteObject;
 
+import session.LogObserverRemote;
+
 public class LogObserver implements LogObserverRemote {
-	private core.InventoryManagementSoftware master = null;
+	private main.Main master = null;
 	
-	public LogObserver(Main m) throws RemoteException {
+	public LogObserver(main.Main m) throws RemoteException {
 		PortableRemoteObject.exportObject(this);
 		master = m;
 	}

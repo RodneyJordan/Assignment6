@@ -1,5 +1,9 @@
 package models;
 
+import java.util.ArrayList;
+
+import session.LogEntry;
+
 /**
  * Creates an Inventory item
  * @author Rodney Jordan
@@ -37,6 +41,10 @@ public class InventoryItem
      * Time stamp
      */
     private String timeStamp;
+    
+    private LogEntry log;
+    
+    ArrayList<LogEntry> logs;
     
     /**
      * for validation

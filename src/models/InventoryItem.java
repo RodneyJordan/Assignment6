@@ -1,7 +1,12 @@
 package models;
 
 import java.util.ArrayList;
+import java.util.Properties;
+import java.util.Random;
 
+import javax.naming.InitialContext;
+
+import session.ItemLogGatewayBeanRemote;
 import session.LogEntry;
 
 /**
@@ -42,9 +47,25 @@ public class InventoryItem
      */
     private String timeStamp;
     
+    /**
+     * Random number generator 
+     */
+    static Random r = new Random();
+    
+    /**
+     * A log entry
+     */
     private LogEntry log;
     
+    /**
+     * list of log entries
+     */
     ArrayList<LogEntry> logs;
+    
+    /**
+     * Gateway remote for logs
+     */
+    private ItemLogGatewayBeanRemote gatewayRemote = null;
     
     /**
      * for validation
@@ -237,6 +258,71 @@ public class InventoryItem
     {
         return Integer.toString(this.quantity);
     }
+    
+    /**
+     * Gets a sorted list of log files for this item
+     */
+    public ArrayList<LogEntry> getLogList() {
+    	if(logs == null) {
+    		logs = gatewayRemote.getLogEntries(this.id);
+    	}	
+    	logs = sort(logs);
+    	return logs;
+    }
+    
+    /**
+     * Adds a new log entry
+     */
+    public void addLogEntry(LogEntry log) {
+    	logs.add(log);
+    }
+    
+    /**
+     * Sorts a list of Log Entries
+     * @param list the list to sort
+     * @return a sorted list
+     */
+    public static ArrayList<LogEntry> sort(ArrayList<LogEntry> list) {
+        if (list.size() <= 1) 
+            return list;
+        int rotationplacement = r.nextInt(list.size());
+        LogEntry rotation = list.get(rotationplacement);
+        list.remove(rotationplacement);
+        ArrayList<LogEntry> lower = new ArrayList<LogEntry>();
+        ArrayList<LogEntry> higher = new ArrayList<LogEntry>();
+        for (int i = 0; i < list.size(); i++) {
+            if (list.get(i).getDate().before(rotation.getDate()) || list.get(i).getDate().equals(rotation.getDate())) {
+            	lower.add(list.get(i));
+            }
+            else
+                higher.add(list.get(i));
+        }
+        sort(lower);
+        sort(higher);
+
+        list.clear();
+        list.addAll(lower);
+        list.add(rotation);
+        list.addAll(higher);
+        return list;
+    }
+    
+    /**
+     * Initializes the session with the ItemLogGatewayBean
+     */
+    public void initSession() {
+		try {
+			Properties props = new Properties();
+			props.put("org.omg.COBRA.ORBInitialHost", "localhost");
+			props.put("org.omg.COBRA.ORBInitialPort", 3700);
+			
+			InitialContext itx = new InitialContext(props);
+			gatewayRemote = (ItemLogGatewayBeanRemote) itx.lookup("java:global/cs4743_session_bean/ItemLogGatewayBean!session.ItemLogGatewayBeanRemote");
+		} catch(javax.naming.NamingException e1) {
+			e1.printStackTrace();
+		}
+		//updateTitle();
+	}
 
     /**
      * Compares an object to an inventory item, checking for equality

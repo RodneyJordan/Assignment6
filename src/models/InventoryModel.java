@@ -167,6 +167,7 @@ public class InventoryModel extends AbstractTableModel {
     	update();
     	if(id > 0) {
     		LogEntry entry = new LogEntry("added");
+    		// setter method in InventoryItem 
     		gatewayRemote.addLogEntry(id, entry);
     	}
     	

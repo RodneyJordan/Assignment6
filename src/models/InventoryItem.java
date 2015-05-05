@@ -138,7 +138,6 @@ public class InventoryItem
     }
     
     public InventoryItem(int id, Part part, String location, int quantity) {
-    	System.out.println("If you see this more than once, you are a dumbass");
     	this.id = id;
     	this.part = part;
     	this.quantity = quantity;

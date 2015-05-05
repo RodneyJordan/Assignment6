@@ -95,7 +95,7 @@ public class DetailView extends JFrame
         
         add(infoPanel);
         System.out.println(item.getIdNumber());
-        setUpPanel5(model.getLogList(selectedRow));
+        setUpPanel5(model.getInventoryItem(selectedRow).getLogList());
         add(panel5);
 
         setUpButtonPanel();

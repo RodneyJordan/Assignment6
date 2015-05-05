@@ -2,16 +2,11 @@ package models;
 
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.Properties;
 import java.util.Random;
 
-import javax.naming.InitialContext;
 import javax.swing.table.AbstractTableModel;
 
-import session.AuthenticationGatewayBeanRemote;
-import session.ItemLogGatewayBeanRemote;
 import session.LogEntry;
 
 /**
@@ -43,11 +38,6 @@ public class InventoryModel extends AbstractTableModel {
      * The inventory array list
      */
     private ArrayList<InventoryItem> inventory;
-    
-    /**
-     * Gateway remote for logs
-     */
-    private ItemLogGatewayBeanRemote gatewayRemote = null;
 
     /**
      * Column names for the table
@@ -109,7 +99,6 @@ public class InventoryModel extends AbstractTableModel {
         this.itemConnectionGateway = icg;
         this.inventory = icg.getItem();
         this.registerInventoryModelObserver(errorObserver);
-        initSession();
     }
 
     /**
@@ -127,12 +116,15 @@ public class InventoryModel extends AbstractTableModel {
     	int id = 0;
         if(!hasError) {
         	id = itemConnectionGateway.addItemToDatabase(inventoryItem, 0);
-        	inventory = itemConnectionGateway.getItem();
+        	inventoryItem.setId(id);
+        	inventory.add(inventoryItem); //= itemConnectionGateway.getItem();
         }
         updateInventoryModelObserver();
         update();
-        LogEntry entry = new LogEntry("added");
-        gatewayRemote.addLogEntry(id, entry);
+        if(!hasError) {
+        	LogEntry entry = new LogEntry("added");
+        	inventoryItem.addLogEntry(entry);
+        }
         
         return hasError;
     }
@@ -160,15 +152,15 @@ public class InventoryModel extends AbstractTableModel {
     		}
     		if(!duplicateProduct){
     			id = itemConnectionGateway.addItemToDatabase(inventoryItem, 1);
-    			inventory = itemConnectionGateway.getItem();
+    			inventoryItem.setId(id);
+    			inventory.add(inventoryItem); //= itemConnectionGateway.getItem();
     		}
     	}
     	updateInventoryModelObserver();
     	update();
     	if(id > 0) {
     		LogEntry entry = new LogEntry("added");
-    		// setter method in InventoryItem 
-    		gatewayRemote.addLogEntry(id, entry);
+    		inventoryItem.addLogEntry(entry);
     	}
     	
     	return hasError;
@@ -323,16 +315,7 @@ public class InventoryModel extends AbstractTableModel {
     	update();
     }
     
-    public ArrayList<LogEntry> getLogList(int row) {
-    	try {
-    		logs = gatewayRemote.getLogEntries(inventory.get(row).getIdNumber());
-    		logs = sort(logs);
-    	} catch(NullPointerException e) {
-    		e.printStackTrace();
-    	}
-    	return logs;
-    }
-    
+    // Update to sort the inventory list
     public static ArrayList<LogEntry> sort(ArrayList<LogEntry> list) {
         if (list.size() <= 1) 
             return list;
@@ -392,19 +375,20 @@ public class InventoryModel extends AbstractTableModel {
     	inventoryItem.setLocation(location);
     	inventoryItem.setEditedQuantity(quantity);
     	itemConnectionGateway.editItem(inventoryItem);
-    	inventory = itemConnectionGateway.getItem();
+    	//inventory = itemConnectionGateway.getItem();
     	
     	updateInventoryModelObserver();
     	update();
     	if(oldQuantity != quantity) {
     		LogEntry entry = new LogEntry("Quantity changed from " + oldQuantity + " to " + quantity);
     		System.out.println("Adding entry description " + entry.getDescription());
-            gatewayRemote.addLogEntry(inventoryItem.getIdNumber(), entry);
+    		System.out.println(inventoryItem.getIdNumber());
+            inventoryItem.addLogEntry(entry);
     	}
     	if(!oldLocation.equals(location)) {
     		LogEntry entry = new LogEntry("Location changed from " + oldLocation + " to " + location);
     		System.out.println("Adding entry description " + entry.getDescription());
-            gatewayRemote.addLogEntry(inventoryItem.getIdNumber(), entry);
+            inventoryItem.addLogEntry(entry);
     	}
     	
     	return hasError;
@@ -413,7 +397,7 @@ public class InventoryModel extends AbstractTableModel {
     public boolean editInventoryItemProduct(ProductTemplate product, String location, int quantity, InventoryItem inventoryItem) {
     	String oldLocation = inventoryItem.getLocation();
     	int oldQuantity = inventoryItem.getQuantity();
-    	System.out.println(product.getDescription() + " " + inventoryItem.getLocation() + " " + "new location " + location);
+    	//System.out.println(product.getDescription() + " " + inventoryItem.getLocation() + " " + "new location " + location);
     	hasError = false; // need to validate the edited product
     	if(!hasError) {
     		if(!oldLocation.equals(location)) {
@@ -437,19 +421,19 @@ public class InventoryModel extends AbstractTableModel {
     	inventoryItem.setLocation(location);
     	inventoryItem.setEditedQuantity(quantity);
     	itemConnectionGateway.editItemProduct(inventoryItem);
-    	inventory = itemConnectionGateway.getItem();
+    	//inventory = itemConnectionGateway.getItem();
     	
     	updateInventoryModelObserver();
     	update();
     	if(oldQuantity != quantity) {
     		LogEntry entry = new LogEntry("Quantity changed from " + oldQuantity + " to " + quantity);
     		System.out.println("Adding entry description " + entry.getDescription());
-            gatewayRemote.addLogEntry(inventoryItem.getIdNumber(), entry);
+            inventoryItem.addLogEntry(entry);
     	}
     	if(!oldLocation.equals(location)) {
     		LogEntry entry = new LogEntry("Location changed from " + oldLocation + " to " + location);
     		System.out.println("Adding entry description " + entry.getDescription());
-            gatewayRemote.addLogEntry(inventoryItem.getIdNumber(), entry);
+    		inventoryItem.addLogEntry(entry);
     	}
     	
     	return hasError;
@@ -558,18 +542,4 @@ public class InventoryModel extends AbstractTableModel {
     public String getErrors() {
         return validate.getErrors();
     }
-    
-    public void initSession() {
-		try {
-			Properties props = new Properties();
-			props.put("org.omg.COBRA.ORBInitialHost", "localhost");
-			props.put("org.omg.COBRA.ORBInitialPort", 3700);
-			
-			InitialContext itx = new InitialContext(props);
-			gatewayRemote = (ItemLogGatewayBeanRemote) itx.lookup("java:global/cs4743_session_bean/ItemLogGatewayBean!session.ItemLogGatewayBeanRemote");
-		} catch(javax.naming.NamingException e1) {
-			e1.printStackTrace();
-		}
-		//updateTitle();
-	}
 }

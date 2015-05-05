@@ -60,7 +60,7 @@ public class InventoryItem
     /**
      * list of log entries
      */
-    ArrayList<LogEntry> logs;
+    ArrayList<LogEntry> logs = null;
     
     /**
      * Gateway remote for logs
@@ -96,6 +96,10 @@ public class InventoryItem
         	validate.addError("Quantity must be an integer");
         }
         this.location = location;
+        initSession();
+        if(logs == null) {
+        	logs = new ArrayList<LogEntry>();
+        }
     }
     
     /**
@@ -110,6 +114,10 @@ public class InventoryItem
     	validate = new ValidateForm();
     	this.quantity = quantity;
     	this.location = location;
+    	initSession();
+    	if(logs == null) {
+        	logs = new ArrayList<LogEntry>();
+        }
     }
     
     public InventoryItem(int id, ProductTemplate product, String location, int quantity) {
@@ -123,14 +131,23 @@ public class InventoryItem
     		validate.addError("Quantity must be an integer");
     	}
     	this.location = location;
+    	initSession();
+    	if(logs == null) {
+        	logs = new ArrayList<LogEntry>();
+        }
     }
     
     public InventoryItem(int id, Part part, String location, int quantity) {
+    	System.out.println("If you see this more than once, you are a dumbass");
     	this.id = id;
     	this.part = part;
     	this.quantity = quantity;
         this.location = location;
         this.timeStamp = null;
+        initSession();
+        if(logs == null) {
+        	logs = new ArrayList<LogEntry>();
+        }
     }
 
     /**
@@ -140,6 +157,13 @@ public class InventoryItem
     public int getIdNumber()
     {
     	return this.id;
+    }
+    
+    /**
+     *  Sets the id number
+     */
+    public void setId(int id) {
+    	this.id = id;
     }
 
     /**
@@ -263,18 +287,22 @@ public class InventoryItem
      * Gets a sorted list of log files for this item
      */
     public ArrayList<LogEntry> getLogList() {
-    	if(logs == null) {
-    		logs = gatewayRemote.getLogEntries(this.id);
+    	initSession();
+    	System.out.println("On call arraylist is size " + this.logs.size());
+    	if(this.logs.size() == 0) {
+    		this.logs = gatewayRemote.getLogEntries(this.id);
     	}	
-    	logs = sort(logs);
-    	return logs;
+    	this.logs = sort(logs);
+    	return this.logs;
     }
     
     /**
      * Adds a new log entry
      */
     public void addLogEntry(LogEntry log) {
-    	logs.add(log);
+    	initSession();
+    	gatewayRemote.addLogEntry(this.id, log);
+    	this.logs.add(log);
     }
     
     /**

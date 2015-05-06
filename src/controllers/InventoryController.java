@@ -164,7 +164,7 @@ public class InventoryController implements ActionListener
         else if(actionCommand.equals("Log")) {
         	int selectedRow = inventoryView.getSelectedRow();
         	ItemLogTableModel tableModel = new ItemLogTableModel(inventoryModel.getInventoryItem(selectedRow).getLogList());
-        	logView = new ItemLogView(tableModel);
+        	logView = new ItemLogView(tableModel, inventoryModel);
         	logView.registerListeners(this);
         }
         else if(actionCommand.equals("Close")) {

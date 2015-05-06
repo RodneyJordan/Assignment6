@@ -296,6 +296,15 @@ public class InventoryItem
     }
     
     /**
+     * Sets the log list
+     */
+    public void setList(ArrayList<LogEntry> list) {
+    	System.out.println("Fucking hell " + list.size());
+    	this.logs = list;
+    	this.logs = sort(logs);
+    }
+    
+    /**
      * Adds a new log entry
      */
     public void addLogEntry(LogEntry log) {

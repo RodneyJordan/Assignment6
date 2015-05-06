@@ -57,5 +57,7 @@ public class ItemLogTableModel extends AbstractTableModel {
     public String getColumnName(int index) {
         return columnNames[index];
     }
+    
+    
 
 }

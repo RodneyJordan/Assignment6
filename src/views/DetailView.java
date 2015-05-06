@@ -4,6 +4,7 @@ import controllers.DetailController;
 import models.InventoryItem;
 import models.InventoryModel;
 import models.ItemLogTableModel;
+import models.LogViewObserver;
 
 import javax.swing.*;
 
@@ -18,7 +19,7 @@ import java.util.ArrayList;
  * @author Jacob Pagano
  */
 @SuppressWarnings("serial")
-public class DetailView extends JFrame
+public class DetailView extends JFrame implements LogViewObserver
 {
     /**
      * Panels for the view
@@ -103,6 +104,8 @@ public class DetailView extends JFrame
 
         setVisible(true);
         setLocationRelativeTo(null);
+        
+        model.registerLogViewObserver(this);
     }
 
     /**
@@ -224,4 +227,10 @@ public class DetailView extends JFrame
     {
         dispose();
     }
+
+	@Override
+	public void update() {
+		table.updateUI();
+		
+	}
 }

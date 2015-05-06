@@ -1,13 +1,18 @@
 package models;
 
 
+import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 import java.util.Random;
 
+import javax.naming.InitialContext;
 import javax.swing.table.AbstractTableModel;
 
+import session.ItemLogGatewayBeanRemote;
 import session.LogEntry;
+import session.LogObserver;
 
 /**
  * Inventory model, this class keeps track of the current inventory as well as validating
@@ -55,6 +60,11 @@ public class InventoryModel extends AbstractTableModel {
     private List<InventoryModelObserver> inventoryModelObservers = new ArrayList<InventoryModelObserver>();
     
     /**
+     * A list of log view observers 
+     */
+    private List<LogViewObserver> logViewObservers = new ArrayList<LogViewObserver>();
+    
+    /**
      * A list of logs
      */
     private ArrayList<LogEntry> logs = new ArrayList<LogEntry>();
@@ -85,6 +95,12 @@ public class InventoryModel extends AbstractTableModel {
      */
     private ProductTemplatePartsModel productTemplatePartsModel;
     
+    LogObserver logObserver;
+    
+    ItemLogGatewayBeanRemote gatewayRemote;
+    
+    private int id;
+    
     /**
      * The parts model
      */
@@ -99,6 +115,22 @@ public class InventoryModel extends AbstractTableModel {
         this.itemConnectionGateway = icg;
         this.inventory = icg.getItem();
         this.registerInventoryModelObserver(errorObserver);
+        this.logs = new ArrayList<LogEntry>();
+        initSession();
+        try {
+			this.logObserver = new LogObserver(this);
+			gatewayRemote.registerObserver(logObserver);
+			Runtime.getRuntime().addShutdownHook(new Thread() {
+				@Override
+				public void run() {
+				System.out.println("Unregistering observer...");
+				gatewayRemote.unregisterObserver(logObserver);
+				}
+				});
+	
+		} catch (RemoteException e) {
+			e.printStackTrace();
+		}
     }
 
     /**
@@ -113,7 +145,7 @@ public class InventoryModel extends AbstractTableModel {
 
     public boolean addItemPart(Part part, String location, String quantity) {
     	createInventoryItem(part, location, quantity);
-    	int id = 0;
+    	id = 0;
         if(!hasError) {
         	id = itemConnectionGateway.addItemToDatabase(inventoryItem, 0);
         	inventoryItem.setId(id);
@@ -131,7 +163,7 @@ public class InventoryModel extends AbstractTableModel {
     
     public boolean addItemProduct(ProductTemplate product, String location, ProductTemplatePartsModel productTemplatePartsModel, PartsModel partsModel) {
     	boolean duplicateProduct = true;
-    	int id = 0;
+    	id = 0;
     	this.productTemplatePartsModel = productTemplatePartsModel;
     	this.partsModel = partsModel;
     	createProductInventoryItem(product, location);
@@ -349,6 +381,7 @@ public class InventoryModel extends AbstractTableModel {
      * @return hasError : true if errors in edited info, false otherwise
      */
     public boolean editInventoryItem(Part part, String location, int quantity, InventoryItem inventoryItem) {
+    	id = inventoryItem.getIdNumber();
     	String oldLocation = inventoryItem.getLocation();
     	int oldQuantity = inventoryItem.getQuantity();
     	hasError = validate.isValidEditItem(location, quantity);
@@ -395,6 +428,7 @@ public class InventoryModel extends AbstractTableModel {
     }
     
     public boolean editInventoryItemProduct(ProductTemplate product, String location, int quantity, InventoryItem inventoryItem) {
+    	id = inventoryItem.getIdNumber();
     	String oldLocation = inventoryItem.getLocation();
     	int oldQuantity = inventoryItem.getQuantity();
     	//System.out.println(product.getDescription() + " " + inventoryItem.getLocation() + " " + "new location " + location);
@@ -492,6 +526,20 @@ public class InventoryModel extends AbstractTableModel {
     	}
     	return hasError;
     }
+    
+    public void updateLogList(ArrayList<LogEntry> list) {
+    	System.out.println("the list at inventory model " + this.id);
+    	for(i = 0; i < inventory.size(); i++) {
+    		if(inventory.get(i).getIdNumber() == id) {
+    			inventoryItem = new InventoryItem();
+    			inventoryItem = inventory.get(i);
+    		}
+    	}
+    	if(inventoryItem != null) {
+    		inventoryItem.setList(list);
+    		updateItemLogTableModel();
+    	}
+    }
 
     /**
      * Registers a table observer
@@ -507,6 +555,10 @@ public class InventoryModel extends AbstractTableModel {
      */
     public void registerInventoryModelObserver(InventoryModelObserver inventoryModelObserver) {
         inventoryModelObservers.add(inventoryModelObserver);
+    }
+    
+    public void registerLogViewObserver(LogViewObserver logViewObserver) {
+    	logViewObservers.add(logViewObserver);
     }
 
     /**
@@ -526,6 +578,15 @@ public class InventoryModel extends AbstractTableModel {
             observer.update(this);
         }
     }
+    
+    /**
+     * Updates the item log table model
+     */
+    public void updateItemLogTableModel() {
+    	for(LogViewObserver observer : logViewObservers) {
+    		observer.update();
+    	}
+    }
 
     /**
      * Gets bool value of true if there are errors, false otherwise
@@ -542,4 +603,21 @@ public class InventoryModel extends AbstractTableModel {
     public String getErrors() {
         return validate.getErrors();
     }
+    
+    /**
+     * Initializes the session with the ItemLogGatewayBean
+     */
+    public void initSession() {
+		try {
+			Properties props = new Properties();
+			props.put("org.omg.COBRA.ORBInitialHost", "localhost");
+			props.put("org.omg.COBRA.ORBInitialPort", 3700);
+			
+			InitialContext itx = new InitialContext(props);
+			gatewayRemote = (ItemLogGatewayBeanRemote) itx.lookup("java:global/cs4743_session_bean/ItemLogGatewayBean!session.ItemLogGatewayBeanRemote");
+		} catch(javax.naming.NamingException e1) {
+			e1.printStackTrace();
+		}
+		//updateTitle();
+	}
 }

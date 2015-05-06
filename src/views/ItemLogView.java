@@ -10,10 +10,12 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 
 import controllers.InventoryController;
+import models.InventoryModel;
 import models.ItemLogTableModel;
+import models.LogViewObserver;
 
 @SuppressWarnings("serial")
-public class ItemLogView extends JFrame {
+public class ItemLogView extends JFrame implements LogViewObserver {
 	
 	/**
 	 * Panels for the view
@@ -49,7 +51,7 @@ public class ItemLogView extends JFrame {
 	/**
 	 * Constructor
 	 */
-	public ItemLogView(ItemLogTableModel model) {
+	public ItemLogView(ItemLogTableModel model, InventoryModel inventoryModel) {
 		super("Log File");
 		setSize(WINDOW_WIDTH, WINDOW_HEIGHT);
 		setLayout(new FlowLayout());
@@ -63,6 +65,8 @@ public class ItemLogView extends JFrame {
 		
 		setVisible(true);
 		setLocationRelativeTo(null);
+		
+		inventoryModel.registerLogViewObserver(this);
 	}
 	
 	/**
@@ -106,5 +110,10 @@ public class ItemLogView extends JFrame {
 	 */
 	public void closeWindow() {
 		this.dispose();
+	}
+
+	@Override
+	public void update() {
+		table.updateUI();
 	}
 }

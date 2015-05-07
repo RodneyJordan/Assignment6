@@ -257,7 +257,6 @@ public class ValidateForm
      */
     public void isValidPartNumber(String partNumber)
     {
-        System.out.println("in part #");
         if(partNumber.equals(""))
         {
             errors.add("Part number cannot be empty");
@@ -292,7 +291,6 @@ public class ValidateForm
      */
     public void isValidPartName(String partName)
     {
-        System.out.println("in part name");
         if(partName.equals(""))
         {
             errors.add("Part name cannot be empty");
@@ -309,7 +307,6 @@ public class ValidateForm
      */
     public void isValidVendor(String vendor)
     {
-        System.out.println("in vendor");
         if(vendor.length() > 255)
         {
             errors.add("Vendor cannot be longer than 255 characters");
@@ -323,7 +320,6 @@ public class ValidateForm
      */
     public void isValidQuantity(int quantity)
     {
-        System.out.println("in qty");
         if(quantity < 1)
         {
             errors.add("Quantity cannot be less than 1");
@@ -337,7 +333,6 @@ public class ValidateForm
      */
     public void isValidEditQuantity(int quantity)
     {
-        System.out.println("in edit qty");
         if(quantity < 0)
         {
             errors.add("Quantity cannot be less than 0");
@@ -351,7 +346,6 @@ public class ValidateForm
      * @param inventoryItem
      */
     public void alreadyExists(ArrayList<InventoryItem> inventory, InventoryItem inventoryItem){
-        System.out.println("in duplicate check");
         for(InventoryItem item : inventory){
             if(inventoryItem.equals(item)){
                 errors.add("Item Already exists");

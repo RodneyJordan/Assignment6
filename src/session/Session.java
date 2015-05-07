@@ -75,7 +75,6 @@ public class Session implements Serializable {
 //		permissions = authGate.getRolePolicy(user.getRoleId());
 		
 		//then set permission booleans here
-		//gonna do this in a piss-poor hardcoded way because lazy, also time constraints
 		for(int p : sessionState.getRolePolicy(user.getRoleId())){
 			switch(p){
 			case 1: this.canViewProductTemplates = true;
@@ -107,26 +106,6 @@ public class Session implements Serializable {
 			}
 		}
 		
-		/*
-		 //debugging
-		for(int i : authGate.getRolePolicy(user.getRoleId())){
-			System.out.println(i);
-		}
-		
-		System.out.println(canViewProductTemplates);
-		System.out.println(canAddProductTemplates);
-		System.out.println(canEditProductTemplates);
-		System.out.println(canDeleteProductTemplates);
-		System.out.println(canCreateProducts);
-		System.out.println(canViewInventoryItems);
-		System.out.println(canAddInventoryItems);
-		System.out.println(canEditInventoryItems);
-		System.out.println(canDeleteInventoryItems);
-		System.out.println(canViewParts);
-		System.out.println(canAddParts);
-		System.out.println(canEditParts);
-		System.out.println(canDeleteParts);
-		*/
 	}
 
 	/*

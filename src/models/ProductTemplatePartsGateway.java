@@ -72,7 +72,6 @@ public class ProductTemplatePartsGateway {
 	 * @param quantity
 	 */
 	public void addPart(int templateId, int partId, int quantity) {
-		System.out.println(templateId + " " + partId + " " + quantity);
 		createConnection();
 		preparedStatement = null;
 		String query = "INSERT into ase_templateParts (templateId, partId, partQuantity) values (?, ?, ?)";
@@ -111,7 +110,6 @@ public class ProductTemplatePartsGateway {
 	 * Delete a part in the database
 	 */
 	public void deletePart(int templateId, int partId) {
-		System.out.println(templateId + " " +partId);
 		createConnection();
 		preparedStatement = null;
 		String query = "DELETE from ase_templateParts where templateId=? and partId=?";

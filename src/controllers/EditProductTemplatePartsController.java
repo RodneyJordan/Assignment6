@@ -112,11 +112,8 @@ public class EditProductTemplatePartsController implements ActionListener {
       }
       else if(actionCommand.equals("Remove")) {
          if(this.editProductTemplatePartsView.deletePart()) {
-        	 System.out.println(detailTemplateModel.getPartId(editProductTemplatePartsView.getSelectedRow()));
-        	 for(Part p : detailTemplateModel.getParts()){System.out.println(p.getIdNumber());}
             templatePartsModel.removeTemplatePart(templatePart.getProductTemplateId(), detailTemplateModel.getPartId(editProductTemplatePartsView.getSelectedRow()),
             		detailTemplateModel);
-            System.out.println("after remove call");
          }
       }
       else if(actionCommand.equals("Cancel")) {
@@ -140,7 +137,6 @@ public class EditProductTemplatePartsController implements ActionListener {
          else {
             isAlreadyOneClick = true;
             Timer t = new Timer("doubleClickTimer", false);
-            System.out.println("working");
             t.schedule(new TimerTask() {
                @Override
                public void run() {

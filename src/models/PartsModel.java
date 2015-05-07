@@ -99,7 +99,6 @@ public class PartsModel extends AbstractTableModel {
 		if(!hasError) {
 			connectionGateway.addPartToDatabase(part);
 			parts = connectionGateway.getParts();
-			System.out.println("part added");
 		}
 		updatePartsModelObserver();
 		update();
@@ -246,13 +245,11 @@ public class PartsModel extends AbstractTableModel {
         	if(partName.equalsIgnoreCase(parts.get(i).getPartName()) && oldPartName != parts.get(i).getPartName()) {
         		if(JOptionPane.showConfirmDialog(null, "This part has the same name as another part", "WARNING",
     					JOptionPane.OK_CANCEL_OPTION) != JOptionPane.OK_OPTION) {
-    				System.out.println("you pushed ok");
     				return true;
     			}
         	}
         }
 		hasError = validate.isValidEditPart(partName, vendor, unitOfQuantity, externalPartNumber);
-		System.out.println(hasError);
 		
 		partToEdit.setPartName(partName);
 		partToEdit.setVendor(vendor);
@@ -282,10 +279,8 @@ public class PartsModel extends AbstractTableModel {
         	if(partName.equalsIgnoreCase(parts.get(i).getPartName())) {
         		if(JOptionPane.showConfirmDialog(null, "This part has the same name as another part", "WARNING",
     					JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
-    				System.out.println("you pushed ok");
     			} else {
     				
-    				System.out.println("you pushed cancel");
     				return true;
         		}
         	}

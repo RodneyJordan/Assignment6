@@ -95,7 +95,6 @@ public class DetailView extends JFrame implements LogViewObserver
         infoPanel.add(panel4);
         
         add(infoPanel);
-        System.out.println(item.getIdNumber());
         setUpPanel5(model.getInventoryItem(selectedRow).getLogList(), model);
         add(panel5);
 

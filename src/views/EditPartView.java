@@ -132,7 +132,6 @@ public class EditPartView extends JFrame {
     	unitOfQuantityCombo.setSelectedItem(unitOfQuantity);
     	
     	
-    	System.out.println("MODEL " + unitOfQuantity);
     		
     	panel3 = new JPanel();
     	panel3.setLayout(layout);

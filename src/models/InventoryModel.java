@@ -1,7 +1,6 @@
 package models;
 
 
-import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
@@ -12,7 +11,6 @@ import javax.swing.table.AbstractTableModel;
 
 import session.ItemLogGatewayBeanRemote;
 import session.LogEntry;
-import session.LogObserver;
 
 /**
  * Inventory model, this class keeps track of the current inventory as well as validating
@@ -122,20 +120,6 @@ public class InventoryModel extends AbstractTableModel {
         this.registerInventoryModelObserver(errorObserver);
         this.logs = new ArrayList<LogEntry>();
         initSession();
-      /* try {
-			this.logObserver = new LogObserver(this);
-			gatewayRemote.registerObserver(logObserver);
-			Runtime.getRuntime().addShutdownHook(new Thread() {
-				@Override
-				public void run() {
-				System.out.println("Unregistering observer...");
-				gatewayRemote.unregisterObserver(logObserver);
-				}
-				});
-	
-		} catch (RemoteException e) {
-			e.printStackTrace();
-		} */ 
     }
     
     public void setTableModel(ItemLogTableModel logModel) {
@@ -230,7 +214,6 @@ public class InventoryModel extends AbstractTableModel {
     					if(inventory.get(i).getQuantity() >= needed) {
     						try {
 								inventory.get(i).setQuantity(inventory.get(i).getQuantity() - needed);
-								System.out.println(inventory.get(i).getQuantity());
 								quantityNeeded = false;
 							} catch (Exception e) {
 								e.printStackTrace();
@@ -395,7 +378,6 @@ public class InventoryModel extends AbstractTableModel {
     	String oldLocation = inventoryItem.getLocation();
     	int oldQuantity = inventoryItem.getQuantity();
     	hasError = validate.isValidEditItem(location, quantity);
-    	System.out.println(hasError);
     	if(!hasError) {
     		if(!oldLocation.equals(location)) {
     			for(i = 0; i < inventory.size(); i++) {
@@ -424,14 +406,11 @@ public class InventoryModel extends AbstractTableModel {
     	update();
     	if(oldQuantity != quantity) {
     		LogEntry entry = new LogEntry("Quantity changed from " + oldQuantity + " to " + quantity);
-    		System.out.println("Adding entry description " + entry.getDescription());
-    		System.out.println(inventoryItem.getIdNumber());
             inventoryItem.addLogEntry(entry);
             gatewayRemote.addLogEntry(id, entry);
     	}
     	if(!oldLocation.equals(location)) {
     		LogEntry entry = new LogEntry("Location changed from " + oldLocation + " to " + location);
-    		System.out.println("Adding entry description " + entry.getDescription());
             inventoryItem.addLogEntry(entry);
             gatewayRemote.addLogEntry(id, entry);
     	}
@@ -444,7 +423,6 @@ public class InventoryModel extends AbstractTableModel {
     	id = inventoryItem.getIdNumber();
     	String oldLocation = inventoryItem.getLocation();
     	int oldQuantity = inventoryItem.getQuantity();
-    	//System.out.println(product.getDescription() + " " + inventoryItem.getLocation() + " " + "new location " + location);
     	hasError = false; // need to validate the edited product
     	if(!hasError) {
     		if(!oldLocation.equals(location)) {
@@ -474,18 +452,15 @@ public class InventoryModel extends AbstractTableModel {
     	update();
     	if(oldQuantity != quantity) {
     		LogEntry entry = new LogEntry("Quantity changed from " + oldQuantity + " to " + quantity);
-    		System.out.println("Adding entry description " + entry.getDescription());
             inventoryItem.addLogEntry(entry);
             gatewayRemote.addLogEntry(id, entry);
     	}
     	if(!oldLocation.equals(location)) {
     		LogEntry entry = new LogEntry("Location changed from " + oldLocation + " to " + location);
-    		System.out.println("Adding entry description " + entry.getDescription());
     		inventoryItem.addLogEntry(entry);
     		gatewayRemote.addLogEntry(id, entry);
     	}
     	tableModel.setList(id);
-    	//updateItemLogTableModel(tableModel);
     	return hasError;
     }
     
@@ -544,7 +519,6 @@ public class InventoryModel extends AbstractTableModel {
     }
     
     public void updateLogList(ArrayList<LogEntry> list) {
-    	System.out.println("the list at inventory model " + this.id);
     	for(i = 0; i < inventory.size(); i++) {
     		if(inventory.get(i).getIdNumber() == id) {
     			inventoryItem = new InventoryItem();
@@ -555,7 +529,6 @@ public class InventoryModel extends AbstractTableModel {
     		//list = inventoryItem.getLogList();
     		inventoryItem.setList(list);
     		//this.logTableModel.setList(list);
-    		System.out.println("About to update the log table model, size of list " + list.size());
     		this.logTableModel.updateItemLogTableModel();
     	}
     }
@@ -597,15 +570,6 @@ public class InventoryModel extends AbstractTableModel {
             observer.update(this);
         }
     }
-    
-    /**
-     * Updates the item log table model
-     */
-    /*public void updateItemLogTableModel(ItemLogTableModel logModel) {
-    	for(LogViewObserver observer : logViewObservers) {
-    		observer.update(logModel);
-    	}
-    } */
 
     /**
      * Gets bool value of true if there are errors, false otherwise
@@ -637,6 +601,5 @@ public class InventoryModel extends AbstractTableModel {
 		} catch(javax.naming.NamingException e1) {
 			e1.printStackTrace();
 		}
-		//updateTitle();
 	}
 }

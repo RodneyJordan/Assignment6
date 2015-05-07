@@ -60,6 +60,7 @@ public class LoginController implements ActionListener, Serializable {
 	/**
 	 * Watches for a button press on the login view
 	 */
+	@SuppressWarnings("deprecation")
 	public void actionPerformed(ActionEvent e) {
 		String actionCommand = e.getActionCommand();
 		if(actionCommand.equalsIgnoreCase("Log In")) {

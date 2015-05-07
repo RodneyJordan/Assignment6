@@ -131,7 +131,6 @@ public class DetailProductTemplatePartsController implements ActionListener {
          else {
             isAlreadyOneClick = true;
             Timer t = new Timer("doubleClickTimer", false);
-            System.out.println("working");
             t.schedule(new TimerTask() {
                @Override
                public void run() {

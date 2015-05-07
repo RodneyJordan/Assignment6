@@ -2,6 +2,7 @@ package controllers;
 
 import models.InventoryItem;
 import models.InventoryModel;
+import models.ItemLogTableModel;
 import models.Part;
 import models.PartsModel;
 import models.ProductTemplate;
@@ -37,6 +38,8 @@ public class EditItemController implements ActionListener
      * The template model
      */
     private TemplateModel templateModel;
+    
+    ItemLogTableModel tableModel;
 
     /**
      * The inventory item
@@ -48,10 +51,12 @@ public class EditItemController implements ActionListener
      * @param inventoryModel
      * @param inventoryItem
      */
-    public EditItemController(InventoryModel inventoryModel, InventoryItem inventoryItem, PartsModel partsModel, TemplateModel templateModel)
+    public EditItemController(InventoryModel inventoryModel, InventoryItem inventoryItem, PartsModel partsModel, TemplateModel templateModel,
+    		 ItemLogTableModel tableModel)
     {
         this.inventoryItem = inventoryItem;
         this.templateModel = templateModel;
+        this.tableModel = tableModel;
         this.partsModel = partsModel;
         if(inventoryItem.getPart() != null) {
         	editItemView = new EditItemView(inventoryItem, partsModel);
@@ -75,14 +80,14 @@ public class EditItemController implements ActionListener
     		if(inventoryItem.getPart() != null) {
     			if(!inventoryModel.editInventoryItem((Part) partsModel.getPart(editItemView.part.getSelectedIndex()),
     				(String) editItemView.partLocations.getItemAt(editItemView.partLocations.getSelectedIndex()),
-    				Integer.parseInt(editItemView.quantityTextField.getText()), inventoryItem)) {
+    				Integer.parseInt(editItemView.quantityTextField.getText()), inventoryItem, tableModel)) {
     				editItemView.closeWindow();
     			}
     		}
     		else {
     			if(!inventoryModel.editInventoryItemProduct((ProductTemplate) templateModel.getTemplate(editItemView.product.getSelectedIndex()),
         				(String) editItemView.partLocations.getItemAt(editItemView.partLocations.getSelectedIndex()),
-        				Integer.parseInt(editItemView.quantityTextField.getText()), inventoryItem)) {
+        				Integer.parseInt(editItemView.quantityTextField.getText()), inventoryItem, tableModel)) {
         				editItemView.closeWindow();
     			}
     		}

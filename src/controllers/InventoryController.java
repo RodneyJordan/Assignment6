@@ -118,17 +118,23 @@ public class InventoryController implements ActionListener
         if(actionCommand.equals("Add"))
         {
         	AddItemController addItemController = new AddItemController(inventoryModel, partsModel, templateModel, productTemplatePartsModel, session);
+        	int selectedRow = inventoryView.getSelectedRow();
+        	ItemLogTableModel tableModel = new ItemLogTableModel(inventoryModel.getInventoryItem(selectedRow).getLogList(), inventoryModel);
+        	//tableModel.updateItemLogTableModel();
         }
         else if(actionCommand.equals("Edit"))
         {
+        	//int selectedRow = inventoryView.getSelectedRow();
+        	
         	if(session.isCanEditInventoryItems()){
         		int selectedRow = inventoryView.getSelectedRow();
+        		ItemLogTableModel tableModel = new ItemLogTableModel(inventoryModel.getInventoryItem(selectedRow).getLogList(), inventoryModel);
                 InventoryItem inventoryItem = inventoryModel.getInventoryItem(selectedRow);
                 if(inventoryItem.getProduct() == null) {
-                	EditItemController editItemController = new EditItemController(inventoryModel, inventoryItem, partsModel, templateModel);
+                	EditItemController editItemController = new EditItemController(inventoryModel, inventoryItem, partsModel, templateModel, tableModel);
                 }
                 else {
-                	EditItemController editItemController = new EditItemController(inventoryModel, inventoryItem, partsModel, templateModel);
+                	EditItemController editItemController = new EditItemController(inventoryModel, inventoryItem, partsModel, templateModel, tableModel);
                 }
         	} else {
         		JOptionPane.showMessageDialog(null, "You are not authorized to edit Inventory Items", "Error", JOptionPane.ERROR_MESSAGE);
@@ -163,8 +169,8 @@ public class InventoryController implements ActionListener
         }
         else if(actionCommand.equals("Log")) {
         	int selectedRow = inventoryView.getSelectedRow();
-        	ItemLogTableModel tableModel = new ItemLogTableModel(inventoryModel.getLogList(selectedRow));
-        	logView = new ItemLogView(tableModel);
+        	ItemLogTableModel tableModel = new ItemLogTableModel(inventoryModel.getInventoryItem(selectedRow).getLogList(), inventoryModel);
+        	logView = new ItemLogView(tableModel, inventoryModel, inventoryModel.getInventoryItem(selectedRow).getIdNumber());
         	logView.registerListeners(this);
         }
         else if(actionCommand.equals("Close")) {
@@ -184,9 +190,10 @@ public class InventoryController implements ActionListener
         {
             if(isAlreadyOneClick && (inventoryView.getSelectedRow() == inventoryView.getLastSelectedRow()))
             {
+            	ItemLogTableModel tableModel = new ItemLogTableModel(inventoryModel.getInventoryItem(inventoryView.getSelectedRow()).getLogList(), inventoryModel);
             	DetailController detailController = new DetailController
                         	(inventoryModel ,inventoryModel.getInventoryItem((inventoryView.getSelectedRow())), partsModel, 
-                        	templateModel,productTemplatePartsModel, session, inventoryView.getSelectedRow());
+                        	templateModel,productTemplatePartsModel, session, inventoryView.getSelectedRow(), tableModel);
             	
                 isAlreadyOneClick = false;
             }

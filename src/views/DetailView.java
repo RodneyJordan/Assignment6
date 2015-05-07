@@ -4,6 +4,7 @@ import controllers.DetailController;
 import models.InventoryItem;
 import models.InventoryModel;
 import models.ItemLogTableModel;
+import models.LogViewObserver;
 
 import javax.swing.*;
 
@@ -18,7 +19,7 @@ import java.util.ArrayList;
  * @author Jacob Pagano
  */
 @SuppressWarnings("serial")
-public class DetailView extends JFrame
+public class DetailView extends JFrame implements LogViewObserver
 {
     /**
      * Panels for the view
@@ -66,7 +67,7 @@ public class DetailView extends JFrame
      * Constructor
      * @param item : The inventory item that details will be shown for.
      */
-    public DetailView(InventoryItem item, InventoryModel model, int selectedRow)
+    public DetailView(InventoryItem item, InventoryModel model, int selectedRow, ItemLogTableModel itemLogTableModel)
     {
         super("Inventory Item");
 
@@ -95,7 +96,7 @@ public class DetailView extends JFrame
         
         add(infoPanel);
         System.out.println(item.getIdNumber());
-        setUpPanel5(model.getLogList(selectedRow));
+        setUpPanel5(model.getInventoryItem(selectedRow).getLogList(), model);
         add(panel5);
 
         setUpButtonPanel();
@@ -103,6 +104,8 @@ public class DetailView extends JFrame
 
         setVisible(true);
         setLocationRelativeTo(null);
+        
+        itemLogTableModel.registerLogViewObserver(this);
     }
 
     /**
@@ -179,8 +182,8 @@ public class DetailView extends JFrame
     /**
      * Sets up the fifth panel
      */
-    public void setUpPanel5(ArrayList<LogEntry> list) {
-    	ItemLogTableModel logModel = new ItemLogTableModel(list);
+    public void setUpPanel5(ArrayList<LogEntry> list, InventoryModel model) {
+    	ItemLogTableModel logModel = new ItemLogTableModel(list, model);
     	table = new JTable(logModel);
     	table.setPreferredScrollableViewportSize(new Dimension(350, 75));
     	table.setFillsViewportHeight(true);
@@ -224,4 +227,10 @@ public class DetailView extends JFrame
     {
         dispose();
     }
+
+	@Override
+	public void update() {
+		table.updateUI();
+		
+	}
 }

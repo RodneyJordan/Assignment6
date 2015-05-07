@@ -1,4 +1,6 @@
-/session
-/views
+/main
 /models
+/session
 /controllers
+/views
+/Main.class

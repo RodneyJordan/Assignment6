@@ -287,19 +287,17 @@ public class InventoryItem
      */
     public ArrayList<LogEntry> getLogList() {
     	initSession();
-    	System.out.println("On call arraylist is size " + this.logs.size());
     	if(this.logs.size() == 0) {
     		this.logs = gatewayRemote.getLogEntries(this.id);
     	}	
     	this.logs = sort(logs);
     	return this.logs;
-    }
+    } 
     
     /**
      * Sets the log list
      */
     public void setList(ArrayList<LogEntry> list) {
-    	System.out.println("Fucking hell " + list.size());
     	this.logs = list;
     	this.logs = sort(logs);
     }
@@ -308,8 +306,8 @@ public class InventoryItem
      * Adds a new log entry
      */
     public void addLogEntry(LogEntry log) {
-    	initSession();
-    	gatewayRemote.addLogEntry(this.id, log);
+    	//initSession();
+    	//gatewayRemote.addLogEntry(this.id, log);
     	this.logs.add(log);
     }
     

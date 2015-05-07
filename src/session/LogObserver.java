@@ -6,19 +6,20 @@ import java.util.ArrayList;
 import javax.rmi.PortableRemoteObject;
 
 import models.InventoryModel;
+import models.ItemLogTableModel;
 
 public class LogObserver implements LogObserverRemote {
-	private InventoryModel inventoryModel = null;
+	private ItemLogTableModel itemLogTableModel = null;
 	
-	public LogObserver(InventoryModel m) throws RemoteException {
+	public LogObserver(ItemLogTableModel m) throws RemoteException {
 		PortableRemoteObject.exportObject(this);
-		inventoryModel = m;
+		itemLogTableModel = m;
 	}
 
 	@Override
 	public void callback(ArrayList<LogEntry> list) throws RemoteException {
 		if(list != null) {
-			inventoryModel.updateLogList(list);
+			itemLogTableModel.updateLogList(list);
 		}
 	}
 

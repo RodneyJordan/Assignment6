@@ -19,7 +19,7 @@ import java.util.ArrayList;
  * @author Jacob Pagano
  */
 @SuppressWarnings("serial")
-public class DetailView extends JFrame implements LogViewObserver
+public class DetailView extends JFrame //implements LogViewObserver
 {
     /**
      * Panels for the view
@@ -96,7 +96,7 @@ public class DetailView extends JFrame implements LogViewObserver
         
         add(infoPanel);
         System.out.println(item.getIdNumber());
-        setUpPanel5(model.getInventoryItem(selectedRow).getLogList());
+        setUpPanel5(model.getInventoryItem(selectedRow).getLogList(), model);
         add(panel5);
 
         setUpButtonPanel();
@@ -105,7 +105,7 @@ public class DetailView extends JFrame implements LogViewObserver
         setVisible(true);
         setLocationRelativeTo(null);
         
-        model.registerLogViewObserver(this);
+        //model.registerLogViewObserver(this);
     }
 
     /**
@@ -182,8 +182,8 @@ public class DetailView extends JFrame implements LogViewObserver
     /**
      * Sets up the fifth panel
      */
-    public void setUpPanel5(ArrayList<LogEntry> list) {
-    	ItemLogTableModel logModel = new ItemLogTableModel(list);
+    public void setUpPanel5(ArrayList<LogEntry> list, InventoryModel model) {
+    	ItemLogTableModel logModel = new ItemLogTableModel(list, model);
     	table = new JTable(logModel);
     	table.setPreferredScrollableViewportSize(new Dimension(350, 75));
     	table.setFillsViewportHeight(true);
@@ -228,9 +228,9 @@ public class DetailView extends JFrame implements LogViewObserver
         dispose();
     }
 
-	@Override
+	/*@Override
 	public void update() {
 		table.updateUI();
 		
-	}
+	} */
 }

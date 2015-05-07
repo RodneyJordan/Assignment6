@@ -2,13 +2,20 @@ package views;
 
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
+import java.util.Properties;
 
+import javax.naming.InitialContext;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 
+import session.ItemLogGatewayBeanRemote;
 import controllers.InventoryController;
 import models.InventoryModel;
 import models.ItemLogTableModel;
@@ -38,6 +45,10 @@ public class ItemLogView extends JFrame implements LogViewObserver {
 	 */
 	private JScrollPane scrollPane;
 	
+	ItemLogTableModel itemLogTableModel;
+	
+	InventoryModel inventoryModel;
+		
 	/**
 	 * The width of the window
 	 */
@@ -51,7 +62,7 @@ public class ItemLogView extends JFrame implements LogViewObserver {
 	/**
 	 * Constructor
 	 */
-	public ItemLogView(ItemLogTableModel model, InventoryModel inventoryModel) {
+	public ItemLogView(ItemLogTableModel model, InventoryModel inventoryModel, int id) {
 		super("Log File");
 		setSize(WINDOW_WIDTH, WINDOW_HEIGHT);
 		setLayout(new FlowLayout());
@@ -62,11 +73,12 @@ public class ItemLogView extends JFrame implements LogViewObserver {
 		
 		add(tablePanel);
 		add(buttonPanel);
-		
+		this.itemLogTableModel = model;
+			
 		setVisible(true);
 		setLocationRelativeTo(null);
-		
-		inventoryModel.registerLogViewObserver(this);
+		this.inventoryModel = inventoryModel;
+		this.inventoryModel.registerLogViewObserver(this);
 	}
 	
 	/**
@@ -113,7 +125,8 @@ public class ItemLogView extends JFrame implements LogViewObserver {
 	}
 
 	@Override
-	public void update() {
+	public void update(ItemLogTableModel model) {
 		table.updateUI();
+		table.repaint();
 	}
 }

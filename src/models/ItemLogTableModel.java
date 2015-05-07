@@ -97,8 +97,9 @@ public class ItemLogTableModel extends AbstractTableModel {
         return columnNames[index];
     }
     
-    public void setList(ArrayList<LogEntry> list) {
-    	this.logEntries = sort(list);
+    public void setList(int id) {
+    	this.logEntries = sort(gatewayRemote.getLogEntries(id));
+    	updateItemLogTableModel();
     }
     
     /**
@@ -136,13 +137,17 @@ public class ItemLogTableModel extends AbstractTableModel {
      */
    public void updateItemLogTableModel() {
     	for(LogViewObserver observer : logViewObservers) {
-    		observer.update(this);
+    		observer.update();
     	}
     } 
     
     public void updateLogList(ArrayList<LogEntry> list) {
     	this.logEntries = sort(list);
-    	//updateItemLogTableModel(this);
+    	updateItemLogTableModel();
+    }
+    
+    public void registerLogViewObserver(LogViewObserver logViewObserver) {
+    	logViewObservers.add(logViewObserver);
     }
     
     /**

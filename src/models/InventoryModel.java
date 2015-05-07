@@ -100,7 +100,7 @@ public class InventoryModel extends AbstractTableModel {
      */
     private ProductTemplatePartsModel productTemplatePartsModel;
     
-    LogObserver logObserver;
+    //LogObserver logObserver;
     
     ItemLogGatewayBeanRemote gatewayRemote;
     
@@ -136,14 +136,6 @@ public class InventoryModel extends AbstractTableModel {
 		} catch (RemoteException e) {
 			e.printStackTrace();
 		} */ 
-    }
-    
-    /**
-     * Creates an abstract model for the log view
-     * @param list
-     */
-    public ItemLogTableModel modelLogTable(ArrayList<LogEntry> list) {
-    	return this.logTableModel = new ItemLogTableModel(list, this);
     }
     
     public void setTableModel(ItemLogTableModel logModel) {
@@ -443,7 +435,8 @@ public class InventoryModel extends AbstractTableModel {
             inventoryItem.addLogEntry(entry);
             gatewayRemote.addLogEntry(id, entry);
     	}
-    	updateItemLogTableModel(tableModel);
+    	//updateItemLogTableModel(tableModel);
+    	tableModel.setList(id);
     	return hasError;
     }
     
@@ -491,7 +484,8 @@ public class InventoryModel extends AbstractTableModel {
     		inventoryItem.addLogEntry(entry);
     		gatewayRemote.addLogEntry(id, entry);
     	}
-    	updateItemLogTableModel(tableModel);
+    	tableModel.setList(id);
+    	//updateItemLogTableModel(tableModel);
     	return hasError;
     }
     
@@ -560,7 +554,7 @@ public class InventoryModel extends AbstractTableModel {
     	if(inventoryItem != null) {
     		//list = inventoryItem.getLogList();
     		inventoryItem.setList(list);
-    		this.logTableModel.setList(list);
+    		//this.logTableModel.setList(list);
     		System.out.println("About to update the log table model, size of list " + list.size());
     		this.logTableModel.updateItemLogTableModel();
     	}
@@ -607,11 +601,11 @@ public class InventoryModel extends AbstractTableModel {
     /**
      * Updates the item log table model
      */
-    public void updateItemLogTableModel(ItemLogTableModel logModel) {
+    /*public void updateItemLogTableModel(ItemLogTableModel logModel) {
     	for(LogViewObserver observer : logViewObservers) {
     		observer.update(logModel);
     	}
-    } 
+    } */
 
     /**
      * Gets bool value of true if there are errors, false otherwise

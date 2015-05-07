@@ -190,9 +190,10 @@ public class InventoryController implements ActionListener
         {
             if(isAlreadyOneClick && (inventoryView.getSelectedRow() == inventoryView.getLastSelectedRow()))
             {
+            	ItemLogTableModel tableModel = new ItemLogTableModel(inventoryModel.getInventoryItem(inventoryView.getSelectedRow()).getLogList(), inventoryModel);
             	DetailController detailController = new DetailController
                         	(inventoryModel ,inventoryModel.getInventoryItem((inventoryView.getSelectedRow())), partsModel, 
-                        	templateModel,productTemplatePartsModel, session, inventoryView.getSelectedRow());
+                        	templateModel,productTemplatePartsModel, session, inventoryView.getSelectedRow(), tableModel);
             	
                 isAlreadyOneClick = false;
             }

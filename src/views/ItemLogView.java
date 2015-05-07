@@ -78,7 +78,7 @@ public class ItemLogView extends JFrame implements LogViewObserver {
 		setVisible(true);
 		setLocationRelativeTo(null);
 		this.inventoryModel = inventoryModel;
-		this.inventoryModel.registerLogViewObserver(this);
+		this.itemLogTableModel.registerLogViewObserver(this);
 	}
 	
 	/**
@@ -125,8 +125,9 @@ public class ItemLogView extends JFrame implements LogViewObserver {
 	}
 
 	@Override
-	public void update(ItemLogTableModel model) {
+	public void update() {
 		table.updateUI();
 		table.repaint();
+		table.revalidate();
 	}
 }

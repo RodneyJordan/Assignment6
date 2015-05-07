@@ -2,6 +2,7 @@ package controllers;
 
 import models.InventoryItem;
 import models.InventoryModel;
+import models.ItemLogTableModel;
 import models.PartsModel;
 import models.ProductTemplatePartsModel;
 import models.TemplateModel;
@@ -60,13 +61,13 @@ public class DetailController implements ActionListener
      * @param inventoryItem
      */
     public DetailController(InventoryModel inventoryModel, InventoryItem inventoryItem, PartsModel partsModel, TemplateModel templateModel,
-    		ProductTemplatePartsModel productTemplatePartsModel, Session session, int selectedRow)
+    		ProductTemplatePartsModel productTemplatePartsModel, Session session, int selectedRow, ItemLogTableModel itemLogTableModel)
     {
     	this.session = session;
     	this.partsModel = partsModel;
         this.inventoryItem = inventoryItem;
         this.inventoryModel = inventoryModel;
-        detailView = new DetailView(this.inventoryItem, this.inventoryModel, selectedRow);
+        detailView = new DetailView(this.inventoryItem, this.inventoryModel, selectedRow, itemLogTableModel);
         this.templateModel = templateModel;
         this.productTemplatePartsModel = productTemplatePartsModel; 
         this.detailView.registerListeners(this);

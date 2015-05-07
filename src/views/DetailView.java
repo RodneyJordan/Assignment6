@@ -19,7 +19,7 @@ import java.util.ArrayList;
  * @author Jacob Pagano
  */
 @SuppressWarnings("serial")
-public class DetailView extends JFrame //implements LogViewObserver
+public class DetailView extends JFrame implements LogViewObserver
 {
     /**
      * Panels for the view
@@ -67,7 +67,7 @@ public class DetailView extends JFrame //implements LogViewObserver
      * Constructor
      * @param item : The inventory item that details will be shown for.
      */
-    public DetailView(InventoryItem item, InventoryModel model, int selectedRow)
+    public DetailView(InventoryItem item, InventoryModel model, int selectedRow, ItemLogTableModel itemLogTableModel)
     {
         super("Inventory Item");
 
@@ -105,7 +105,7 @@ public class DetailView extends JFrame //implements LogViewObserver
         setVisible(true);
         setLocationRelativeTo(null);
         
-        //model.registerLogViewObserver(this);
+        itemLogTableModel.registerLogViewObserver(this);
     }
 
     /**
@@ -228,9 +228,9 @@ public class DetailView extends JFrame //implements LogViewObserver
         dispose();
     }
 
-	/*@Override
+	@Override
 	public void update() {
 		table.updateUI();
 		
-	} */
+	}
 }
